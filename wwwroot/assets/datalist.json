@@ -1,0 +1,27 @@
+  [
+  {
+    "Nome": "",
+    "Cognome": "",
+    "DataN": "0000-00-00",
+    "Provincia": "",
+    "Comune": "",
+    "CAP": "",
+    "Indirizzo": "",
+    "Fisso": "",
+    "Mobile": "",
+    "Note": ""
+  },
+  {
+    "Nome": "Federico",
+    "Cognome": "Lupieri",
+    "DataN": "2015-09-16",
+    "Provincia": "",
+    "Comune": "",
+    "CAP": "34170",
+    "Indirizzo": "Via Ascoli 1",
+    "Fisso": "00112233445566",
+    "Mobile": "00112233445566",
+    "Note": "Vediamo se funziona questo"
+  }
+];
+

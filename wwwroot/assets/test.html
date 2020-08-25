@@ -1,0 +1,52 @@
+
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<link href="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.css" rel="stylesheet">
+<script src="https://unpkg.com/bootstrap-table@1.15.5/dist/bootstrap-table.min.js"></script>
+
+</head>
+
+
+<body>
+
+    <div class="container"><table class="display table table-bordered" id="clienti">
+      <thead>
+        <tr>
+          <th data-field="Nome">Nome</th>
+          <th data-field="Cognome">Cognome</th>
+          <th data-field="DataN">Data Nascita</th>
+          <th data-field="Provincia">Provincia</th>
+          <th data-field="Comune">Comune</th>
+          <th data-field="CAP">CAP</th>
+          <th data-field="Indirizzo">Indirizzo</th>
+          <th data-field="Fisso">Fisso</th>
+          <th data-field="Mobile">Cellulare</th>
+          <th data-field="Note">Note</th>
+        </tr>
+      </thead>
+    </table>
+
+
+
+    <script>
+  
+
+            $(document).ready(function(){
+                $.ajax({
+                    method: 'GET',
+                   url: 'datalist.json',
+                   dataType: 'json',
+                   success: function(data2) {
+                       //alert('done');
+                       $('#clienti').bootstrapTable({
+                          data: data2
+                       });
+                   },
+                   error: function(e) {
+                       console.log(e.responseText);
+                   }
+                });
+             });
+    </script>
+
+</body>
