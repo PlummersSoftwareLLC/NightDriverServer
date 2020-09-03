@@ -1,0 +1,14 @@
+#Stage 1
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1-focal-arm32v7 AS build
+WORKDIR /build
+COPY . .
+RUN dotnet restore 
+RUN dotnet publish -c Release -o /docker
+
+# Stage 2
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-focal-arm32v7 AS final
+ENV TZ=America/Los_Angeles
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+WORKDIR /docker
+COPY --from=build /docker .
+ENTRYPOINT ["dotnet", "NightDriverServer.dll"]
