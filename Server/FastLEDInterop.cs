@@ -7,6 +7,14 @@ using System.Collections.Concurrent;
 
 namespace NightDriver
 {
+    public static class MathExtensions
+    {
+        public static decimal Map(this decimal value, decimal fromSource, decimal toSource, decimal fromTarget, decimal toTarget)
+        {
+            return (value - fromSource) / (toSource - fromSource) * (toTarget - fromTarget) + fromTarget;
+        }
+    }
+
     public static class QueueExtensions
     {
         public static IEnumerable<T> DequeueChunk<T>(this ConcurrentQueue<T> queue, int chunkSize)

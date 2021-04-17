@@ -90,10 +90,10 @@ namespace NightDriver
         {
             double epoch = (DateTime.UtcNow.Ticks - DateTime.UnixEpoch.Ticks) / (double) TimeSpan.TicksPerSecond;
 
-            ulong seconds = (ulong)epoch;                                       // Whole part of time number (left of the decimal point)
+            //ulong seconds = (ulong)epoch;                                       // Whole part of time number (left of the decimal point)
             //ulong uSeconds = (ulong)((epoch - (int)epoch) * 1000000);           // Fractional part of time (right of the decimal point)
 
-             return seconds;
+             return epoch;
         }
 
     }
@@ -129,7 +129,7 @@ namespace NightDriver
             g = (byte)((input >> 8) & 0xFF);
             b = (byte)((input) & 0xFF);
         }
-           
+
         public CRGB(CRGB other)
         {
             r = other.r;
@@ -157,21 +157,21 @@ namespace NightDriver
         }
         */
 
-        public static CRGB Black        { get { return new CRGB(0,0,0);       } } 
-        public static CRGB White        { get { return new CRGB(255,255,255); } }
-        public static CRGB Grey         { get { return new CRGB(160,160,160); } }
+        public static CRGB Black { get { return new CRGB(0, 0, 0); } }
+        public static CRGB White { get { return new CRGB(255, 255, 255); } }
+        public static CRGB Grey { get { return new CRGB(160, 160, 160); } }
 
-        public static CRGB Red          { get { return new CRGB(255, 0, 0);   } }
-        public static CRGB Maroon       { get { return new CRGB(255, 0, 128); } }
-        public static CRGB Blue         { get { return new CRGB(0, 0, 255);   } }
-        public static CRGB Cyan         { get { return new CRGB(0, 255, 255); } } 
-        public static CRGB Green        { get { return new CRGB(0, 255, 0);   } }
-        public static CRGB Yellow       { get { return new CRGB(255, 255, 0); } }
-        public static CRGB Purple       { get { return new CRGB(255, 0, 255); } }
-        public static CRGB Pink         { get { return new CRGB(255, 0, 128); } }
-        public static CRGB Orange       { get { return new CRGB(255, 128, 0); } }
+        public static CRGB Red { get { return new CRGB(255, 0, 0); } }
+        public static CRGB Maroon { get { return new CRGB(255, 0, 128); } }
+        public static CRGB Blue { get { return new CRGB(0, 0, 255); } }
+        public static CRGB Cyan { get { return new CRGB(0, 255, 255); } }
+        public static CRGB Green { get { return new CRGB(0, 255, 0); } }
+        public static CRGB Yellow { get { return new CRGB(255, 255, 0); } }
+        public static CRGB Purple { get { return new CRGB(255, 0, 255); } }
+        public static CRGB Pink { get { return new CRGB(255, 0, 128); } }
+        public static CRGB Orange { get { return new CRGB(255, 128, 0); } }
 
-        public static CRGB Incandescent { get { return new CRGB(255,214,170); } }
+        public static CRGB Incandescent { get { return new CRGB(255, 214, 170); } }
 
         public UInt32 ColorValueAsInt()
         {
@@ -199,7 +199,7 @@ namespace NightDriver
             }
             set
             {
-                System.Drawing.Color color = System.Drawing.Color.FromArgb(r, g, b);            
+                System.Drawing.Color color = System.Drawing.Color.FromArgb(r, g, b);
                 double s = color.GetSaturation();
                 //double v = color.GetBrightness();
                 CRGB c = HSV2RGB(value * 360.0, s, 1);
@@ -208,10 +208,10 @@ namespace NightDriver
                 b = c.b;
             }
         }
-         
+
         public double RGB2HSV(out double s, out double v)
         {
-            System.Drawing.Color color = System.Drawing.Color.FromArgb(r, g, b);            
+            System.Drawing.Color color = System.Drawing.Color.FromArgb(r, g, b);
             s = color.GetSaturation();
             v = color.GetBrightness();
             return color.GetHue();
@@ -226,7 +226,7 @@ namespace NightDriver
             CRGB outval = new CRGB();
 
             if (s <= 0.0)                       // No saturaturation, return a greyscale
-            {       
+            {
                 outval.r = (byte)(v * 255);
                 outval.g = (byte)(v * 255);
                 outval.b = (byte)(v * 255);
@@ -234,7 +234,7 @@ namespace NightDriver
             }
 
             hh = h;
-            if (hh >= 360.0) 
+            if (hh >= 360.0)
                 hh = 0.0;
             hh /= 60.0;
             i = (long)hh;
@@ -250,7 +250,7 @@ namespace NightDriver
                     outval.g = (byte)(255 * t);
                     outval.b = (byte)(255 * p);
                     break;
-                
+
                 case 1:
                     outval.r = (byte)(255 * q);
                     outval.g = (byte)(255 * v);
@@ -272,7 +272,7 @@ namespace NightDriver
                 case 4:
                     outval.r = (byte)(255 * t);
                     outval.g = (byte)(255 * p);
-                    outval.b = (byte)(255 * v); 
+                    outval.b = (byte)(255 * v);
                     break;
 
                 case 5:
@@ -280,7 +280,7 @@ namespace NightDriver
                     outval.r = (byte)(255 * v);
                     outval.g = (byte)(255 * p);
                     outval.b = (byte)(255 * q);
-                break;
+                    break;
             }
 
             return outval;
@@ -288,7 +288,7 @@ namespace NightDriver
 
 
         private CRGB scaleColorsDownTo(double amount)
-        { 
+        {
             r = (byte)(r * amount);
             g = (byte)(g * amount);
             b = (byte)(b * amount);
@@ -303,7 +303,7 @@ namespace NightDriver
             return this;
         }
 
-        public CRGB brightenBy(double amt) 
+        public CRGB brightenBy(double amt)
         {
             CRGB copy = new CRGB(this);
             double amountToBrighten = amt;
@@ -328,7 +328,7 @@ namespace NightDriver
             return copy;
         }
 
-        public CRGB fadeToBlackBy(double amt) 
+        public CRGB fadeToBlackBy(double amt)
         {
             CRGB copy = new CRGB(this);
             double amountToFade = Utilities.constrain(amt, 0.0f, 1.0f);
@@ -341,10 +341,10 @@ namespace NightDriver
             byte r = (byte)(this.r * amount + other.r * (1.0 - amount));
             byte g = (byte)(this.g * amount + other.g * (1.0 - amount));
             byte b = (byte)(this.b * amount + other.b * (1.0 - amount));
-            return new CRGB(r,g,b);
+            return new CRGB(r, g, b);
         }
 
-        public static CRGB operator+ (CRGB left, CRGB right)
+        public static CRGB operator +(CRGB left, CRGB right)
         {
             byte r = (byte)Math.Clamp(left.r + right.r, 0, 255);
             byte g = (byte)Math.Clamp(left.g + right.g, 0, 255);
@@ -352,7 +352,7 @@ namespace NightDriver
             return new CRGB(r, g, b);
         }
 
-        public static CRGB operator* (CRGB left, double right)
+        public static CRGB operator *(CRGB left, double right)
         {
             byte r = (byte)(left.r * right);
             byte g = (byte)(left.g * right);
@@ -364,16 +364,16 @@ namespace NightDriver
         {
             temp = Math.Min(1.0f, temp);
             byte temperature = (byte)(255 * temp);
-            byte t192 = (byte) Math.Round((temperature/255.0f) * 191);
+            byte t192 = (byte)Math.Round((temperature / 255.0f) * 191);
 
             byte heatramp = (byte)(t192 & 0x3F);
-            heatramp <<=2;
+            heatramp <<= 2;
 
             if (t192 > 0x80)
                 return new CRGB(255, 255, heatramp);
             else if (t192 > 0x40)
                 return new CRGB(255, heatramp, 0);
-            else 
+            else
                 return new CRGB(heatramp, 0, 0);
         }
 
@@ -382,10 +382,10 @@ namespace NightDriver
 
         public static CRGB[] makeGradient(CRGB start, CRGB end, int length = 16)
         {
-            CRGB [] array = new CRGB[length];
-            double currentFraction = (double) 1 / length;
+            CRGB[] array = new CRGB[length];
+            double currentFraction = (double)1 / length;
             double currentRemainder = 1.0 - currentFraction;
-            double fractionIncrement = (double) 1 / length;
+            double fractionIncrement = (double)1 / length;
 
             // Because the multiplication operator for color returns a fraction of a color, and because the additioon operator can
             // add them, we can generate the color steps along the way quite easily...
@@ -398,7 +398,7 @@ namespace NightDriver
 
         public static CRGB[] AllBlue => Enumerable.Repeat(CRGB.Blue, 16).ToArray();
 
-        public static CRGB[] BlueStars => new CRGB[16]
+        public static CRGB[] BlueStars => new CRGB[]
         {
             new CRGB(0, 0, 32),
             new CRGB(0, 0, 64),
@@ -415,7 +415,27 @@ namespace NightDriver
             new CRGB(0, 0, 255),
             new CRGB(0, 32, 255),
             new CRGB(0, 64, 255),
-            new CRGB(0, 96, 255)
+            new CRGB(0, 96, 255),
+            new CRGB(0, 128, 255),
+            new CRGB(0, 144, 255),
+            new CRGB(0, 176, 255),
+            new CRGB(0, 192, 255),
+            new CRGB(0, 208, 255),
+            new CRGB(0, 224, 255),
+            new CRGB(0, 240, 255),
+            new CRGB(0, 255, 255),
+            new CRGB(32, 255, 255),
+            new CRGB(64, 255, 255),
+            new CRGB(96, 255, 255),
+            new CRGB(128, 255, 255),
+            new CRGB(144, 255, 255),
+            new CRGB(176, 255, 255),
+            new CRGB(192, 255, 255),
+            new CRGB(208, 255, 255),
+            new CRGB(224, 255, 255),
+            new CRGB(240, 255, 255),
+            new CRGB(255, 255, 255),
+
         };
 
         public static CRGB[] HotStars => new CRGB[16]
@@ -568,32 +588,73 @@ namespace NightDriver
         {
             CRGB.Red,
             CRGB.Orange,
-            CRGB.Yellow,
             CRGB.Green,
             CRGB.Cyan,
             CRGB.Blue,
             CRGB.Purple,
         };
 
+        public static CRGB[] BlueFlame => new CRGB[]
+        {
+            CRGB.Black,
+            new CRGB(0, 0, 16),
+            new CRGB(0, 0, 128),
+            new CRGB(0, 0, 192),
+            new CRGB(0, 0, 255),
+            new CRGB(0, 128, 255),
+            CRGB.White
+        };
+
+        public static CRGB[] Emergency => new CRGB[]
+        {
+            CRGB.Blue,
+            CRGB.Blue,
+            CRGB.Black,
+            CRGB.Black,
+            CRGB.Red,
+            CRGB.Red,
+            CRGB.Black,
+            CRGB.Black,
+        };
+        public static CRGB[] URegina => new CRGB[]
+        {
+            new CRGB(0, 0x8F, 0x2e),
+            new CRGB(0, 0x8F, 0x2e),
+            CRGB.Black,
+            CRGB.Black,
+            new CRGB(0xff, 0xc8, 0x2e),
+            new CRGB(0xff, 0xc8, 0x2e),
+            CRGB.Black,
+            CRGB.Black,
+        };
         public static CRGB[] Rainbow2 => new CRGB[]
         {
             CRGB.Red,
             CRGB.Red,
-            CRGB.Red,
+
+            CRGB.Red.blendWith(CRGB.Orange),
+
             CRGB.Orange,
+
             CRGB.Yellow,
             CRGB.Yellow,
-            CRGB.Yellow,
+
             CRGB.Green,
-            CRGB.Green,
-            CRGB.Green,
+            CRGB.Green.blendWith(CRGB.Cyan),
+
             CRGB.Cyan,
+
+            //CRGB.Cyan.blendWith(CRGB.Blue, .75),
+            //CRGB.Cyan.blendWith(CRGB.Blue, .25),
+
+
             CRGB.Blue,
             CRGB.Blue,
-            CRGB.Blue,
+
+            CRGB.Blue.blendWith(CRGB.Purple, .50),
+
             CRGB.Purple,
-            CRGB.Purple,
-            CRGB.Purple,
+        
         };
 
         public static CRGB[] Reds => new CRGB[]
@@ -646,6 +707,35 @@ namespace NightDriver
 
         public static CRGB[] Football_Seattle => new CRGB[]
         {
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(0,21,50),
+            new CRGB(0,21,50),
+            new CRGB(0,21,50),
+            new CRGB(0,21,50),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(3,38,58),
+            new CRGB(54,87,140),
+            new CRGB(78,167,1),
+            new CRGB(78,167,1),
+            new CRGB(78,167,1),
+            new CRGB(78,167,1),
+            new CRGB(78,167,1),
+            new CRGB(78,167,1),
+            new CRGB(54,87,140),
+        };
+
+
+        public static CRGB[] Football_Seattle_Orig => new CRGB[]
+        {
             CRGB.White,
             new CRGB(3,38,58),
             new CRGB(3,38,58),
@@ -664,6 +754,14 @@ namespace NightDriver
             new CRGB(3,38,58),
             new CRGB(54,87,140),
             new CRGB(78,167,1),
+        };
+
+        public static CRGB[] Football_Seattle_3 => new CRGB[]
+        {
+            new CRGB(0,21, 50),
+            new CRGB(105,190,40),
+            new CRGB(129,138,143),
+            new CRGB(1, 51, 105)
         };
 
         public static CRGB[] DarkRainbow => new CRGB[]

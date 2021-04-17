@@ -6,26 +6,26 @@ using NightDriver;
 
 public class PaletteEffect : LEDEffect
 {
-    private double _shiftAmount = 0;
+    private double _iPixel = 0;
 
-    protected double       _startIndex;
+    protected double       _iColor;
     protected ILEDGraphics _graphics;
     protected DateTime     _lastDraw = DateTime.UtcNow;
 
     public Palette         _Palette             = new Palette(CRGB.Rainbow);
-    public double          _LEDColorPerSecond   = 15.0;
+    public double          _LEDColorPerSecond   = 1.0;
     public double          _LEDScrollSpeed      = 0.0;
     public double          _Density             = 1.0;
     public double          _EveryNthDot         = 5.0f;
-    public bool            _Blend               = true;
     public uint            _DotSize             = 2;
     public bool            _RampedColor         = false;
     public double          _Brightness = 1.0;
+    public bool            _Mirrored            = false;
 
     public PaletteEffect(Palette palette)
     {
         _Palette            = palette;
-        _startIndex         = 0;
+        _iColor         = 0;
     }
 
     // Update is called once per frame
@@ -37,42 +37,38 @@ public class PaletteEffect : LEDEffect
         double secondsElapsed = (DateTime.UtcNow - _lastDraw).TotalSeconds;
         _lastDraw = DateTime.UtcNow;
 
-        _shiftAmount += secondsElapsed * _LEDScrollSpeed;
+        double cPixelsToScroll = secondsElapsed * _LEDScrollSpeed;
+        _iPixel += cPixelsToScroll;
+        _iPixel %= graphics.DotCount;
 
+        double cColorsToScroll = secondsElapsed * _LEDColorPerSecond;
+        _iColor += cColorsToScroll / _Palette.OriginalSize;
+        _iColor -= (long)_iColor;
 
-        _startIndex += secondsElapsed * _LEDColorPerSecond;
-        _startIndex %= _Palette.FullSize;
-        double colorIndex = _startIndex;
+        double iColor = _iColor;
 
-        for (double i = _shiftAmount - _EveryNthDot; i < _shiftAmount + graphics.DotCount; i += _EveryNthDot)
+        uint cLength = (_Mirrored ? graphics.DotCount / 2 : graphics.DotCount);
+
+        for (double i = 0; i < cLength; i += _EveryNthDot)
         {
-            CRGB c = _Palette.ColorFromPalette((double)colorIndex / _Palette.FullSize, 1.0f, _Blend);
-
-            if (false == _RampedColor)
+            int count = 0;
+            for (uint j = 0; j < _DotSize && (i + j) < cLength; j++)
             {
-                graphics.DrawPixels(i % graphics.DotCount, _DotSize, c.fadeToBlackBy(1.0 - _Brightness));
+                double iPixel = (i + j + _iPixel) % cLength;
+
+                CRGB c = _Palette[iColor].fadeToBlackBy(1.0 - _Brightness);
+
+                double cCenter = graphics.DotCount / 2.0;
+
+                graphics.DrawPixels(iPixel + (_Mirrored ? cCenter : 0), 1, c);
+                if (_Mirrored)
+                    graphics.DrawPixels(cCenter - iPixel, 1, c);
+                count++;
+
             }
-            else
-            {
-                double half = _DotSize / 2;
+            iColor += count * _Density / _Palette.OriginalSize;
 
-                CRGB c1;
-                for (int j = 0; j < _DotSize; j++)
-                {
-                    double dx = Math.Abs(half - j);
-                    dx /= half;
-
-                    c1 = c.fadeToBlackBy(dx);
-
-                    if ((int)j == (int)half)
-                        c1 = c1.blendWith(CRGB.White, 0.5);
-
-                    graphics.DrawPixels((i + j) % graphics.DotCount, 1, c1.fadeToBlackBy(1.0 - _Brightness));
-                }
-            }
-            colorIndex += 1 * _Density * (_Palette.FullSize / (double) _Palette.OriginalSize);
-            colorIndex %= _Palette.FullSize;
         }
     }
-
+    
 }

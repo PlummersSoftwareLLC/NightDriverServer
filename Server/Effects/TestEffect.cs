@@ -65,55 +65,7 @@ namespace NightDriver
         }
     };
 
-    public class PaletteFillEffect : LEDEffect
-    {
-        protected Palette _Palette;
-
-        public double     ColorPerSecond = 15;
-        public double     ScrollSpeed = 0;
-        public double      EveryNthDot = 5;
-        public uint       DotSize;
-        
-        private double    _startIndex = 0;
-        private double     _shiftAmount = 0;
-
-        protected ILEDGraphics _Graphics;
-
-        DateTime _lastDraw = DateTime.UtcNow;
-
-        public PaletteFillEffect(Palette palette, uint everyNth = 5, uint dotSize = 1, double colorSpeed = 1, double ledSpeed = 0)
-        {
-            DotSize = dotSize;
-            _Palette = palette;
-            EveryNthDot = everyNth;
-            ColorPerSecond = colorSpeed;
-            ScrollSpeed = ledSpeed;
-        }
-
-        // Update is called once per frame
-
-        protected override void Render(ILEDGraphics graphics)
-        {
-            graphics.FillSolid(CRGB.Black);
-
-            double secondsElapsed = (DateTime.UtcNow - _lastDraw).TotalSeconds;
-            _lastDraw = DateTime.UtcNow;
-
-            _shiftAmount += (double)(secondsElapsed * ScrollSpeed);
-            _shiftAmount %= EveryNthDot;
-
-            _startIndex = _startIndex + secondsElapsed * ColorPerSecond;
-            double index = _startIndex + _shiftAmount;
-            index %= _Palette.FullSize;
-
-            for (double i = _shiftAmount; i < graphics.DotCount; i += EveryNthDot)
-            { 
-                CRGB c = _Palette.ColorFromPalette((byte)index, 1.0f, true);
-                graphics.DrawPixels(i, DotSize, c);
-            }
-        }   
-    }
-
+   
     public class TestEffect : LEDEffect
     {
         private uint _startIndex;

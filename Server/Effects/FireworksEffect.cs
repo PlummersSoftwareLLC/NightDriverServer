@@ -92,7 +92,7 @@ public class FireworksEffect : LEDEffect
         // Randomly create some new stars this frame; the number we create is tied to the size of the display
         // so that the display size can change and the "effect density" will stay the same
 
-        for (int iPass = 0; iPass < graphics.DotCount / 50; iPass++)
+        for (int iPass = 0; iPass < Math.Max(5, graphics.DotCount / 50); iPass++)
         {
             if (_random.NextDouble() < NewParticleProbability * 0.005)
             {
@@ -115,7 +115,7 @@ public class FireworksEffect : LEDEffect
         // In the degenerate case of particles not aging out for some reason, we need to set a pseudo-realistic upper
         // bound, and the very number of possible pixels seems like a reasonable one
 
-        while (_Particles.Count > graphics.DotCount)
+        while (_Particles.Count > graphics.DotCount * 5)
             _Particles.Dequeue();
 
         // Start out with an empty canvas

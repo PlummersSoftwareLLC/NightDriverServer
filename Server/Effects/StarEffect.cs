@@ -67,7 +67,6 @@ public class StarEffect<StarType> : LEDEffect where StarType : BaseStar
                                            Palette,
                                            colorD,
                                            speedD,
-                                           Blend,
                                            Alignment);
 
                 else if (typeof(StarType).IsAssignableFrom(typeof(PaletteStar)))
@@ -76,8 +75,7 @@ public class StarEffect<StarType> : LEDEffect where StarType : BaseStar
                                            Direction,
                                            Palette,
                                            colorD,
-                                           speedD,
-                                           Blend);
+                                           speedD);
                 else
                     star = null;
 
@@ -229,16 +227,14 @@ public class PaletteStar : BaseStar
     protected double          _paletteSpeed;
     protected Palette         _palette;
     protected double          _paletteIndex;
-    protected bool            _blend;
 
-    public PaletteStar(double pos, double maxSpeed, int direction, Palette palette, double paletteIndex, double paletteSpeed = 0.0, bool blend = true) : base(pos, maxSpeed, direction)
+    public PaletteStar(double pos, double maxSpeed, int direction, Palette palette, double paletteIndex, double paletteSpeed = 0.0) : base(pos, maxSpeed, direction)
     {
         _palette = palette;
         _lastUpdate = DateTime.UtcNow;
         _lastColorChange = DateTime.UtcNow;
         _paletteSpeed = paletteSpeed;
         _paletteIndex = paletteIndex;
-        _blend = blend;
     }
            
     public override void Update()
@@ -248,8 +244,8 @@ public class PaletteStar : BaseStar
         base.Update();                                                                  // Resets _lastUpdate, so get value first
 
         _paletteIndex += _paletteSpeed * deltaSeconds;
-        _paletteIndex %= _palette.FullSize;                                                           // Number of entries in a Palette256
-        StarColor = _palette.ColorFromPalette(_paletteIndex, 1.0f, _blend);
+        _paletteIndex %= _palette.OriginalSize;                                                           // Number of entries in a Palette256
+        StarColor = _palette[_paletteIndex];
     }
 }
 
@@ -261,8 +257,8 @@ public class AlignedPaletteStar : PaletteStar
 {
     protected uint _alignment;
 
-    public AlignedPaletteStar(double pos, double maxSpeed, int direction, Palette palette, double paletteIndex, double paletteSpeed = 0.0, bool blend = true, uint alignment = 8)
-        : base(pos, maxSpeed, direction, palette, paletteIndex, paletteSpeed, blend)
+    public AlignedPaletteStar(double pos, double maxSpeed, int direction, Palette palette, double paletteIndex, double paletteSpeed = 0.0, uint alignment = 8)
+        : base(pos, maxSpeed, direction, palette, paletteIndex, paletteSpeed)
     {
         _alignment = alignment;
     }

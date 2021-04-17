@@ -94,7 +94,7 @@ namespace NightDriver
         {
             get
             {
-                return 30;
+                return 300;
             }
         }
 
@@ -175,7 +175,6 @@ namespace NightDriver
 
         public void DrawAndEnqueueAll()
         {
-
             DateTime timeStart2 = DateTime.UtcNow;
 
             var enabledEffects = LEDEffects.Where(effect => effect.ShouldEffectRunNow == true);
@@ -302,14 +301,34 @@ namespace NightDriver
 
     public static class EffectsDatabase
     {
+        //        public static LEDEffect FireWindow => new BlueFire(5*144, true)
+        //        {
+        //           _Cooling = 100
+        //        };
+
+        public static LEDEffect FireWindow => new FireEffect(5 * 144, true, new Palette(CRGB.BlueFlame))
+        {
+           _Cooling = 100
+        };
+
+        public static LEDEffect MarqueeEffect => new PaletteEffect(Palette.Rainbow)
+        {
+            _Density = .5,
+            _EveryNthDot = 4,
+            _DotSize = 2,
+            _LEDColorPerSecond = 0,
+            _LEDScrollSpeed = 10,
+            _Brightness = 0.1,
+            _Mirrored = true
+        };
+
         public static LEDEffect ColorCycleTube => new PaletteEffect(Palette.Rainbow)
         {
             _Density = 0,
             _EveryNthDot = 1,
             _DotSize = 1,
-            _LEDColorPerSecond = 1.75,
+            _LEDColorPerSecond = 0.125,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
         public static LEDEffect WhitePointLights => new SimpleColorFillEffect(new CRGB(246, 200, 160));
@@ -319,7 +338,7 @@ namespace NightDriver
             Blend = true,
             NewStarProbability = 2.25,
             StarPreignitonTime = 0.25,
-            StarIgnition = 0.0, 
+            StarIgnition = 0.0,
             StarHoldTime = 2.0,
             StarFadeTime = 1.0,
             StarSize = 1,
@@ -333,17 +352,17 @@ namespace NightDriver
         public static LEDEffect QuietColorStars => new StarEffect<PaletteStar>
         {
             Blend = true,
-            NewStarProbability = 1.25,
+            NewStarProbability = 2.25,
             StarPreignitonTime = 0.25,
             StarIgnition = 0.0,
             StarHoldTime = 2.0,
             StarFadeTime = 1.0,
             StarSize = 1,
-            MaxSpeed = 1,
+            MaxSpeed = 0,
             ColorSpeed = 0,
             Palette = new Palette(CRGB.ChristmasLights),
             RampedColor = false
-            
+
         };
 
         public static LEDEffect ClassicTwinkle => new StarEffect<PaletteStar>
@@ -378,14 +397,14 @@ namespace NightDriver
         public static LEDEffect TwinkleBlueStars => new StarEffect<PaletteStar>
         {
             Blend = true,
-            NewStarProbability = 0.5,
+            NewStarProbability = 25,
             StarPreignitonTime = 0.1,
-            StarIgnition = 0.5,
+            StarIgnition = 0.1,
             StarHoldTime = 2.0,
             StarFadeTime = 1.0,
             StarSize = 1,
             MaxSpeed = 5,
-            ColorSpeed = 1,
+            ColorSpeed = 0,
             Palette = new Palette(CRGB.BlueSpectrum)
         };
 
@@ -441,7 +460,6 @@ namespace NightDriver
             _DotSize = 10,
             _LEDColorPerSecond = 0,
             _LEDScrollSpeed = 10,
-            _Blend = true,
             _RampedColor = true
         };
         public static LEDEffect VintageChristmasLights => new PaletteEffect(new Palette(CRGB.VintageChristmasLights))
@@ -451,7 +469,6 @@ namespace NightDriver
             _DotSize = 10,
             _LEDColorPerSecond = 0,
             _LEDScrollSpeed = 20,
-            _Blend = true,
             _RampedColor = true
         };
 
@@ -462,19 +479,17 @@ namespace NightDriver
             _DotSize = 10,
             _LEDColorPerSecond = 0,
             _LEDScrollSpeed = 80,
-            _Blend = true,
             _RampedColor = true
         };
 
         public static LEDEffect ChristmasLightsFast => new PaletteEffect(new Palette(CRGB.ChristmasLights))
         {
             _Density = 16,
-            _EveryNthDot = 24,
+            _EveryNthDot = 32,
             _DotSize = 1,
             _LEDColorPerSecond = 0,
-            _LEDScrollSpeed = 120,
-            _Blend = true,
-            _RampedColor = true
+            _LEDScrollSpeed = 1,
+            _RampedColor = false
         };
 
 
@@ -504,24 +519,22 @@ namespace NightDriver
             Palette = Palette.Rainbow
         };
 
-        public static LEDEffect RainbowMiniLites => new PaletteEffect(Palette.Rainbow)
+        public static LEDEffect RainbowMiniLites => new PaletteEffect(Palette.SmoothRainbow ) 
         {
             _Density = .1,
-            _EveryNthDot = 14,
+            _EveryNthDot = 4,
             _DotSize = 1,
-            _LEDColorPerSecond = 50,
-            _LEDScrollSpeed = 0,
-            _Blend = true
+            _LEDColorPerSecond = 2,
+            _LEDScrollSpeed = 0
         };
 
-        public static LEDEffect RainbowStrip => new PaletteEffect(Palette.Rainbow)
+        public static LEDEffect RainbowStrip => new PaletteEffect(Palette.SmoothRainbow)
         {
-            _Density = .005,
+            _Density = Palette.SmoothRainbow.OriginalSize / 144.0 / 3.0,
             _EveryNthDot = 1,
             _DotSize = 1,
-            _LEDColorPerSecond = 250,
+            _LEDColorPerSecond = 4,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
         public static LEDEffect MiniLites => new PaletteEffect(new Palette(new CRGB[]
@@ -533,15 +546,13 @@ namespace NightDriver
             CRGB.Purple,
             CRGB.Pink,
             CRGB.Blue
-        },
-        256))
+        }))
         {
             _Density = .1,
             _EveryNthDot = 14,
             _DotSize = 1,
-            _LEDColorPerSecond = 50,
+            _LEDColorPerSecond = 3,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
         public static LEDEffect RainbowColorLites => new PaletteEffect(Palette.Rainbow)
@@ -549,9 +560,8 @@ namespace NightDriver
             _Density = 0.15,
             _EveryNthDot = 8,
             _DotSize = 3,
-            _LEDColorPerSecond = 100,
+            _LEDColorPerSecond = 5,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
         public static LEDEffect CupboardRainbowSweep => new PaletteEffect(Palette.Rainbow)
@@ -559,9 +569,8 @@ namespace NightDriver
             _Density = .5 / 16,
             _EveryNthDot = 10,
             _DotSize = 10,
-            _LEDColorPerSecond = 50,
+            _LEDColorPerSecond = 3,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
         public static LEDEffect ColorFadeMiniLites => new PaletteEffect(Palette.Rainbow)
@@ -569,9 +578,8 @@ namespace NightDriver
             _Density = 0,
             _EveryNthDot = 14,
             _DotSize = 1,
-            _LEDColorPerSecond = 3,
+            _LEDColorPerSecond = 0.1,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
         public static LEDEffect RidersEffect => new PaletteEffect(new Palette(CRGB.Football_Regina))
@@ -579,9 +587,8 @@ namespace NightDriver
             _Density = 1,
             _EveryNthDot = 2,
             _DotSize = 1,
-            _LEDColorPerSecond = 30,
+            _LEDColorPerSecond = 2,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
         public static LEDEffect RidersEffect2 => new PaletteEffect(new Palette(CRGB.Football_Regina2))
@@ -589,66 +596,62 @@ namespace NightDriver
             _Density = 1,
             _EveryNthDot = 2,
             _DotSize = 1,
-            _LEDColorPerSecond = 30,
+            _LEDColorPerSecond = 2,
             _LEDScrollSpeed = 0,
-            _Blend = false      
         };
 
-        public static LEDEffect Football_Effect_Seattle => new PaletteEffect(new Palette(CRGB.Football_Seattle, CRGB.Football_Seattle.Length))
+        public static LEDEffect Football_Effect_Seattle => new PaletteEffect(new Palette(CRGB.Football_Seattle))
         {
-            _Density = 1,
-            _EveryNthDot = 10,
-            _DotSize = 7,
-            _LEDColorPerSecond = 0,
-            _LEDScrollSpeed = 20,
-            _Blend = true
+            _Density = .1,
+            _EveryNthDot = 1,
+            _DotSize = 1,
+            _LEDColorPerSecond = 5,
+            _LEDScrollSpeed = 0,
         };
 
-        public static LEDEffect Football_Effect_Seattle2 => new PaletteEffect(new Palette(CRGB.Football_Seattle, CRGB.Football_Seattle.Length))
+        public static LEDEffect Football_Effect_SeattleA => new PaletteEffect(new Palette(CRGB.Football_Seattle))
+        {
+            _Density = 1 / CRGB.Football_Seattle.Length,
+            _EveryNthDot = 1,
+            _DotSize = 1,
+            _LEDColorPerSecond = 2,
+            _LEDScrollSpeed = 0,
+        };
+
+        public static LEDEffect Football_Effect_Seattle2 => new PaletteEffect(new Palette(CRGB.Football_Seattle))
         {
             _Density = 8,
             _EveryNthDot = 10,
             _DotSize = 5,
             _LEDColorPerSecond = 0,
             _LEDScrollSpeed = 20,
-            _Blend = true
         };
 
-        public static LEDEffect BluePulse => new PaletteFillEffect(new Palette(CRGB.BluePeak))
-        {
-            EveryNthDot = 1,
-            ColorPerSecond = 250,
-            ScrollSpeed = 0
-        };
-
-        public static LEDEffect NeonSpears => new PaletteEffect(new Palette(CRGB.RainbowStripes, 1024))
+        public static LEDEffect NeonSpears => new PaletteEffect(new Palette(CRGB.RainbowStripes))
         {
             _Density = 0.001,
             _EveryNthDot = 1,
             _DotSize = 1,
-            _LEDColorPerSecond = 100,
+            _LEDColorPerSecond = 10,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
-        public static LEDEffect Spears2 => new PaletteEffect(new Palette(CRGB.Rainbow, 1024))
+        public static LEDEffect Spears2 => new PaletteEffect(new Palette(CRGB.Rainbow))
         {
-            _Density = 0.5,
+            _Density = 1.0/144.0,
             _EveryNthDot = 1,
             _DotSize = 1,
-            _LEDColorPerSecond = 200,
+            _LEDColorPerSecond = 2,
             _LEDScrollSpeed = 0,
-            _Blend = true
         };
 
-        public static LEDEffect C9 => new PaletteEffect(new Palette(CRGB.VintageChristmasLights, 16))
+        public static LEDEffect C9 => new PaletteEffect(new Palette(CRGB.VintageChristmasLights))
         {
             _Density = 1,
-            _EveryNthDot = 1,
+            _EveryNthDot = 16,
             _DotSize = 1,
-            _LEDColorPerSecond = 4,
+            _LEDColorPerSecond = 0,
             _LEDScrollSpeed = 0,
-            _Blend = false
         };
 
         public static LEDEffect SeawawksTwinkleStarEffect => new StarEffect<PaletteStar>
@@ -685,6 +688,29 @@ namespace NightDriver
             RandomStarColorSpeed = false
         };
 
+        public static LEDEffect ChristmasTwinkleStarEffect
+        {
+            get
+            {
+                return new StarEffect<PaletteStar>
+                {
+                    Palette = new Palette(CRGB.ChristmasLights),
+                    Blend = true,
+                    NewStarProbability = 5,
+                    StarPreignitonTime = 0.05,
+                    StarIgnition = .05,
+                    StarHoldTime = 1.0,
+                    StarFadeTime = .5,
+                    StarSize = 1,
+                    MaxSpeed = 2,
+                    ColorSpeed = 0,
+                    RandomStartColor = true,
+                    BaseColorSpeed = 0.0,
+                    RandomStarColorSpeed = false
+                };
+            }
+        }
+
         public static LEDEffect BasicColorTwinkleStarEffect
         {
             get
@@ -701,7 +727,7 @@ namespace NightDriver
                     MaxSpeed = 2,
                     ColorSpeed = -2,
                     RandomStartColor = false,
-                    BaseColorSpeed = 0.2,
+                    BaseColorSpeed = 0.1,
                     RandomStarColorSpeed = false
                 };
             }
@@ -799,31 +825,29 @@ namespace NightDriver
             }
         }
 
-        public static LEDEffect FastColorSpokes => new PaletteEffect(new Palette(CRGB.Rainbow, 1024))
+        public static LEDEffect FastColorSpokes => new PaletteEffect(new Palette(CRGB.Rainbow))
         {
             _Density = 2,
             _EveryNthDot = 12,
             _DotSize = 3,
             _LEDColorPerSecond = 0,
             _LEDScrollSpeed = 40,
-            _Blend = true
 
         };
 
-        public static LEDEffect ColorTunnel => new PaletteEffect(new Palette(CRGB.Rainbow, 1024))
+        public static LEDEffect ColorTunnel => new PaletteEffect(new Palette(CRGB.Rainbow))
         {
             _Density = .36,
             _EveryNthDot = 3,
             _DotSize = 1,
-            _LEDColorPerSecond = 250,
-            _LEDScrollSpeed = 5,
-            _Blend = true
+            _LEDColorPerSecond = 5,
+            _LEDScrollSpeed = 1,
         };
 
-        public static LEDEffect SlowNeonRails => new PaletteEffect(new Palette(CRGB.Rainbow, 1024))
+        public static LEDEffect SlowNeonRails => new PaletteEffect(new Palette(CRGB.Rainbow))
         {
             _Density = 1/2.0,
-            _LEDColorPerSecond = 750,
+            _LEDColorPerSecond = 5,
             _LEDScrollSpeed = 1,
         };
 
@@ -870,46 +894,63 @@ namespace NightDriver
 
         private CRGB[] _LEDs = InitializePixels<CRGB>(CABANA_LENGTH);
 
-        // 210 Error
-        // 208 Accepts a few then resets
-        // 136 Accepts a few then resets
-
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.38", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false) {  },
+            new LightStrip("192.168.1.51", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false) {  },
             new LightStrip("192.168.1.42", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)  {  },
             new LightStrip("192.168.1.39", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false) {  },
             new LightStrip("192.168.1.41", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) {  },
         };
 
+        public ScheduledEffect[] _GameDayLEDEffects =
+        {
+            // Intense Effects for Daytime Hours
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 21,  EffectsDatabase.Football_Effect_Seattle),
+        };
+
+
         public ScheduledEffect[] _LEDEffects =
-        {                 
-            // Dark parts of day
-            //new ScheduledEffect(ScheduledEffect.AllDays,  0,  24, new TimeOfNightEffect()),
-            
+        {
+            // Intense Effects for Daytime Hours
+
+            // Christmas new ScheduledEffect(ScheduledEffect.AllDays,  9, 21, EffectsDatabase.ChristmasTwinkleStarEffect),
+
+            // All Day Effects - QuietStuff
+
+            // new ScheduledEffect(ScheduledEffect.AllDays,  0,  24, EffectsDatabase.ChristmasLightsFast),
+            // new ScheduledEffect(ScheduledEffect.AllDays,  0,  24, EffectsDatabase.ChristmasLightsFast),
+
+            // new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.RainbowMiniLites),
+           
+                // Quiet Early AM
+
             new ScheduledEffect(ScheduledEffect.AllDays,  0,  1, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.90f), 4)),
             new ScheduledEffect(ScheduledEffect.AllDays,  1,  2, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.90f), 4)),
             new ScheduledEffect(ScheduledEffect.AllDays,  2,  3, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.90f), 4)),
             new ScheduledEffect(ScheduledEffect.AllDays,  3,  4, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.90f), 4)),
             new ScheduledEffect(ScheduledEffect.AllDays,  4,  5, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.75f), 2)),
-            new ScheduledEffect(ScheduledEffect.AllDays,  6,  7, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.50f), 2)),
-            new ScheduledEffect(ScheduledEffect.AllDays,  8,  9, EffectsDatabase.QuietBlueStars),
-
-
-            new ScheduledEffect(ScheduledEffect.AllDays,  9, 21, new FireworksEffect() { NewParticleProbability = 2.0 } ),
-
-            new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.RainbowStrip),
-            new ScheduledEffect(ScheduledEffect.AllDays,  9, 21, EffectsDatabase.BasicColorTwinkleStarEffect),
            
-            new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.ColorFadeMiniLites),
-            new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.RainbowMiniLites),
-            new ScheduledEffect(ScheduledEffect.AllDays,  21, 24, EffectsDatabase.QuietBlueStars),
+                // All Day 
 
-            
-            };
+            new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.ColorFadeMiniLites),
+            new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.BasicColorTwinkleStarEffect),
+            new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.QuietBlueStars),
+            new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.QuietColorStars),
+            // new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.SparseChristmasLights),
+        };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
-        public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
+        public override ScheduledEffect[] LEDEffects 
+        { 
+            get 
+            {
+                if (false)
+                    return _GameDayLEDEffects;
+                else
+                    return _LEDEffects; 
+            } 
+        }
         protected override CRGB[] LEDs { get { return _LEDs; } }
     };
 
@@ -921,42 +962,114 @@ namespace NightDriver
     {
         const bool compressData = true;
         const int BENCH_START   = 0;
-        const int BENCH_LENGTH  = 144*3;
+        const int BENCH_LENGTH = 3*144;
 
         private CRGB[] _LEDs    = InitializePixels<CRGB>(BENCH_LENGTH);
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.51", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
+            new LightStrip("192.168.1.173", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
-                    
-            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.Football_Effect_Seattle2) 
-            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
-            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(3*144, true) { _Cooling = 1000 } ),
-            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 2.0 } )
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
-            /*
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new PaletteEffect(Palette.Rainbow2)
-            {
-                _Density = .15,
-                _EveryNthDot = 1,
-                _DotSize = 1,
-                _LEDColorPerSecond = 150,
-                _LEDScrollSpeed = 0,
-                _Brightness = .25,
-                _Blend = true
-            }),
-            */
-        };
 
-        public override LightStrip[] LightStrips   { get { return _StripControllers; } }
+            new ScheduledEffect(ScheduledEffect.AllDays,  0,  24, EffectsDatabase.Football_Effect_Seattle),
+
+        
+        //new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.ChristmasLightsFast),
+        //new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.SparseChristmasLights2),
+
+        //new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.TwinkleChristmasLights),
+
+
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 1)),
+
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, false) { _Cooling = 15000, _Drift = 1, _SparkHeight = 3, _Sparks = 1, _Reversed = true, _SparkProbability = 0.5, _Mirrored = true } ),
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 2.0, MaxSpeed = 30 } )
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.QuietColorStars),
+
+        /*
+        new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new StarEffect<ColorStar>()
+        {
+            Blend = true,
+            NewStarProbability = 2.25,
+            StarPreignitonTime = 0.25,
+            StarIgnition = 0.0,
+            StarHoldTime = 2.0,
+            StarFadeTime = 1.0,
+            StarSize = 1,
+            MaxSpeed = 2,
+            BaseColorSpeed = 0.0,
+            ColorSpeed = 1.0,
+            RandomStartColor = false,
+            RandomStarColorSpeed = false,
+        })
+        */
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect())
+
+        /*
+        new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
+            new PaletteEffect(true ? Palette.Rainbow : new Palette( new CRGB[] {  new CRGB(0, 0x8F, 0x2e), } ))
+            {
+                _Density = (Double)Palette.Rainbow.OriginalSize / BENCH_LENGTH, _LEDScrollSpeed = 0, _LEDColorPerSecond = 1, _DotSize = 1, _EveryNthDot = 2, _Brightness = 1
+            }
+        ),
+        */
+
+    };
+
+        public override LightStrip[] LightStrips        { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
         protected override CRGB[] LEDs                  { get { return _LEDs; } }
     };
 
+    // Demo
+    //
+    // Used for filming demos on video camera
+
+    public class Demo : Location
+    {
+        const bool compressData = true;
+        const int DEMO_START = 0;
+        const int DEMO_LENGTH = 18;
+
+        private CRGB[] _LEDs = InitializePixels<CRGB>(DEMO_LENGTH);
+
+        private LightStrip[] _StripControllers =
+        {
+            new LightStrip("192.168.1.54", "DEMO", compressData, DEMO_LENGTH, 1, DEMO_START, false) {  }  // 216
+        };
+
+        public ScheduledEffect[] _LEDEffects =
+        {
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 1)),
+     
+           //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.White, 1)), 
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(DEMO_LENGTH, false) { _Cooling = 120 }  ),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 6.0, MaxSpeed = 20 } ),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.TwinkleBlueStars  ),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(DEMO_LENGTH, false) { _Cooling = 600 } ),
+
+           new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
+
+                new PaletteEffect(true ? Palette.Rainbow : new Palette( new CRGB[] {  new CRGB(0, 0x80, 0xFF), } ))
+                {
+                    _Density =.25, _LEDScrollSpeed = 0, _LEDColorPerSecond = 12, _DotSize = 1, _EveryNthDot = 1, _Brightness = 1
+                }
+            ),
+
+
+
+        };
+
+        public override LightStrip[] LightStrips { get { return _StripControllers; } }
+        public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
+        protected override CRGB[] LEDs { get { return _LEDs; } }
+    };
     public class Tree : Location
     {
         const bool compressData = true;
@@ -974,16 +1087,27 @@ namespace NightDriver
         {
             //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 3.0 } )
             //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.CharlieBrownTree),
+            
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow)
             {
-                _Density = .5,
+                _Density = 1,
                 _EveryNthDot = 10,
                 _DotSize = 2,
                 _LEDColorPerSecond = 0,
                 _LEDScrollSpeed = 5,
-                _Blend = true,
-                _Brightness = .25
+                _Brightness = .0750
             })
+            /*
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(new Palette(CRGB.URegina))
+            {
+                _Density = .25,
+                _EveryNthDot = 8,
+                _DotSize = 4,
+                _LEDColorPerSecond = 0,
+                _LEDScrollSpeed = 15,
+                _Brightness = .125
+            })
+            */
         };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
@@ -1006,9 +1130,10 @@ namespace NightDriver
 
         public ScheduledEffect[] _LEDEffects =
         {
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.Football_Effect_Seattle2),
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.Mirror),
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.Mirror3),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(93, true) { _Cooling = 2000, _Drift = 1, _SparkHeight = 4, _Sparks = 1 } ),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.Football_Effect_Seattle2),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.Mirror),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.Mirror3),
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ColorTunnel),
         };
 
@@ -1076,7 +1201,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.0.136", "TV",        compressData, TV_LENGTH,         1, TV_START, false) { }
+            new LightStrip("192.168.1.198", "TV",        compressData, TV_LENGTH,         1, TV_START, false) { }
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1095,7 +1220,7 @@ namespace NightDriver
                 _Blend = true
             })
             */
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Red))
+           new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Red))
     };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
@@ -1138,7 +1263,7 @@ namespace NightDriver
             //new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, new SimpleColorFillEffect(CRGB.Blue)),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.Orange, 1))
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(new CRGB(64, 255, 128), 1))
-            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow) { _EveryNthDot = 1, _DotSize = 1, _Density = 0.075/32, _LEDColorPerSecond = 28 }),
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow) { _EveryNthDot = 1, _DotSize = 1, _Density = 0.075/32, _LEDColorPerSecond = 0.5 }),
         };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
@@ -1150,7 +1275,7 @@ namespace NightDriver
     //
     // Location definition for the lights int the 3-window south shop bay window
 
-
+    /*
     public class ShopSouthWindows1 : Location
     {
         const bool compressData = true;
@@ -1162,7 +1287,7 @@ namespace NightDriver
         const int WINDOW_LENGTH = WINDOW_1_LENGTH;
 
         private CRGB[] _LEDs = InitializePixels<CRGB>(WINDOW_LENGTH);
-
+        
         private LightStrip[] _StripControllers =
         {
             new LightStrip("192.168.1.34", "WINDOW1", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
@@ -1171,7 +1296,9 @@ namespace NightDriver
         public ScheduledEffect[] _LEDEffects =
         {
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
-                new SimpleColorFillEffect(CRGB.Green.fadeToBlackBy(0.2), 1))
+                // EffectsDatabase.FireWindow)
+                new SimpleColorFillEffect(CRGB.Orange, 1))
+
         };
 
 
@@ -1200,7 +1327,12 @@ namespace NightDriver
         public ScheduledEffect[] _LEDEffects =
         {
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
-                new SimpleColorFillEffect(CRGB.Blue.blendWith(CRGB.Cyan).fadeToBlackBy(0.5), 1))
+                new SimpleColorFillEffect(new CRGB(0,32,255), 1))
+
+                //EffectsDatabase.FireWindow
+                //new PaletteEffect(new Palette( new CRGB[] { CRGB.Blue, CRGB.Purple } )) { _Density = 0.0001, _DotSize = 1, _EveryNthDot = 1, _LEDColorPerSecond = 0.1 }
+             
+                //new SimpleColorFillEffect(CRGB.Blue, 1))
         };
 
 
@@ -1226,10 +1358,11 @@ namespace NightDriver
             new LightStrip("192.168.1.36", "WINDOW3", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
         };
 
-    public ScheduledEffect[] _LEDEffects =
-    {
+        public ScheduledEffect[] _LEDEffects =
+        {
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
-                new SimpleColorFillEffect(CRGB.Red.blendWith(CRGB.Orange, .75).fadeToBlackBy(0.5), 1))
+                //EffectsDatabase.FireWindow)
+                new SimpleColorFillEffect(CRGB.Green, 1))
         };
 
 
@@ -1237,8 +1370,8 @@ namespace NightDriver
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
         protected override CRGB[] LEDs { get { return _LEDs; } }
     }
-
-    /*
+    */
+    
     public class ShopSouthWindows : Location
     {
         const bool compressData = true;
@@ -1260,17 +1393,23 @@ namespace NightDriver
             new LightStrip("192.168.1.34", "WINDOW1", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
             new LightStrip("192.168.1.35", "WINDOW2", compressData, WINDOW_2_LENGTH, 1, WINDOW_2_START, false),
             new LightStrip("192.168.1.36", "WINDOW3", compressData, WINDOW_3_LENGTH, 1, WINDOW_3_START, false),
-
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
-                new PaletteEffect(Palette.Rainbow)
+
+                new PaletteEffect(true ? Palette.Rainbow : new Palette( new CRGB[] {  new CRGB(0, 0x4f, 0xff), } ))
                 {
-                    _Density = 0.025, _LEDScrollSpeed = 35, _LEDColorPerSecond = 0, _DotSize = 1, _EveryNthDot = 1, _Brightness = 0.75
+                    _Density = (Double)Palette.Rainbow.OriginalSize / WINDOW_LENGTH, 
+                    _LEDScrollSpeed = 0, 
+                    _LEDColorPerSecond = .05, 
+                    _DotSize = WINDOW_1_LENGTH, 
+                    _EveryNthDot = WINDOW_1_LENGTH, 
+                    _Brightness = 1,
                 }
             ),
+            
         };
 
 
@@ -1278,7 +1417,8 @@ namespace NightDriver
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
         protected override CRGB[] LEDs { get { return _LEDs; } }
     };
-    */
+    
+    
 
     // ShopEastWindows
     //
@@ -1303,13 +1443,14 @@ namespace NightDriver
         };
         private static readonly ScheduledEffect[] _LEDEffects =
         {
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.Football_Effect_Seattle),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.ChristmasLights),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.GetBlackbodyHeatColor(0.80).fadeToBlackBy(0.75), 1))
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.Green, 2)),
-            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow)
-                {
-                    _Density = 0.0025, _LEDScrollSpeed = 100, _LEDColorPerSecond = 250, _DotSize = 1, _EveryNthDot = 1, _Brightness = 0.5
-                })
+            //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow)
+            //    {
+            //        _Density = 0.0025, _LEDScrollSpeed = 5, _LEDColorPerSecond = 5, _DotSize = 1, _EveryNthDot = 1, _Brightness = 0.5
+            //    })
             //new ScheduledEffect(ScheduledEffect.AllDays, 17, 21, new FireEffect(WINDOW_2_LENGTH, true)),
         };
 

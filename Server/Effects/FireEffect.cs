@@ -11,18 +11,28 @@ public class FireEffect : LEDEffect
     public int   _SparkHeight = 12;          // Height of region in which sparks can be created
     public bool  _Afterburners = false;      // A visually intense, white-hot flame (vs. nice campfire)
     public uint  _Size = 0;                  // How big the drawing area is; will be repeated if strip is bigger
-
+    public double _SparkProbability = 0.5;   // Chance of a new spark
     double[]     _Temperatures;              // Internal table of cell temperatures
+    public Palette _Palette;
 
     public Random _rand = new Random();
 
-    public FireEffect(uint cSize, bool bMirrored)
+    public FireEffect(uint cSize, bool bMirrored, Palette palette = null)
     {
-        _Size = cSize;
+        _Size     = cSize;
         _Mirrored = bMirrored;
+        _Palette  = palette;
     }
 
     DateTime _lastUpdate = DateTime.UtcNow;
+
+    protected virtual CRGB ConvertHeatToColor(double temp)
+    {
+        if (_Palette is null)
+                return CRGB.GetBlackbodyHeatColor(temp);
+        temp = Math.Min(1.0, temp);
+        return _Palette[temp];
+    }
 
     protected override void Render(ILEDGraphics graphics)
     {
@@ -59,7 +69,7 @@ public class FireEffect : LEDEffect
 
         for (int frame = 0; frame < _Sparks; frame++)
         {
-            if (_rand.NextDouble() < 0.5f)
+            if (_rand.NextDouble() < _SparkProbability)
             {
                 // NB: This randomly rolls over sometimes of course, and that's essential to the effect
                 int y = (int)(_rand.NextDouble() * _SparkHeight);
@@ -77,7 +87,7 @@ public class FireEffect : LEDEffect
         {
             for (int j = _Temperatures.Length; j < graphics.DotCount; j++)
             {
-                graphics.DrawPixel((uint) j, 0, CRGB.GetBlackbodyHeatColor(_Temperatures[j-(uint) _Temperatures.Length]));
+                graphics.DrawPixel((uint) j, 0, ConvertHeatToColor(_Temperatures[j-(uint) _Temperatures.Length]));
             }
         }
 
@@ -86,20 +96,59 @@ public class FireEffect : LEDEffect
             // Step 4.  Convert heat to LED colors
             for (uint j = 0; j < (_Temperatures.Length) / 2; j++)
             {
-                graphics.DrawPixel((uint)_Temperatures.Length - 1 - j, 0, CRGB.GetBlackbodyHeatColor(_Temperatures[j]));
-                graphics.DrawPixel( j, 0, CRGB.GetBlackbodyHeatColor(_Temperatures[j]));
+                graphics.DrawPixel((uint)_Temperatures.Length - 1 - j, 0, ConvertHeatToColor(_Temperatures[j]));
+                graphics.DrawPixel( j, 0, ConvertHeatToColor(_Temperatures[j]));
             }
         }
         else
         {
             for (uint j = 0; j < _Temperatures.Length; j++)
                 if (_Reversed)
-                    graphics.DrawPixel(j, 0, CRGB.GetBlackbodyHeatColor(_Temperatures[j]));
+                    graphics.DrawPixel(j, 0, ConvertHeatToColor(_Temperatures[j]));
                 else
-                    graphics.DrawPixel((uint)(_Temperatures.Length - 1 - j), 0, CRGB.GetBlackbodyHeatColor(_Temperatures[j]));
+                    graphics.DrawPixel((uint)(_Temperatures.Length - 1 - j), 0, ConvertHeatToColor(_Temperatures[j]));
         }
 
         graphics.Blur(1);
+    }
+}
+
+public class PaletteFire : FireEffect
+{
+    protected Palette palette;
+
+    public PaletteFire(uint cSize, bool bMirrored, Palette pal) : base(cSize, bMirrored)
+    {
+        palette = pal;
+    }
+
+    protected override CRGB ConvertHeatToColor(double temp)
+    {
+        return palette[Math.Min(1.0, temp)];
+    }
+}
+
+public class BlueFire : FireEffect
+{
+    public BlueFire(uint cSize, bool bMirrored) : base(cSize, bMirrored)
+    {
+    }
+
+    protected override CRGB ConvertHeatToColor(double temp)
+    {
+        temp = Math.Min(1.0f, temp);
+        byte temperature = (byte)(255 * temp);
+        byte t192 = (byte)Math.Round((temperature / 255.0f) * 191);
+
+        byte heatramp = (byte)(t192 & 0x3F);
+        heatramp <<= 2;
+
+        if (t192 > 0x80)
+            return new CRGB(heatramp, 255, 255);
+        else if (t192 > 0x40)
+            return new CRGB(0, heatramp, 255);
+        else
+            return new CRGB(0, 0, heatramp);
     }
 }
 
