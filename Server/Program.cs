@@ -59,17 +59,18 @@ namespace NightDriver
 
         internal static Location [] g_AllSites = 
         { 
-          new Cabana()            { FramesPerSecond = 22 },  // Should be max of 22 given the 8*144
-          new Bench()             { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
-          //new TV()                { FramesPerSecond = 22 },  // Runs flame effect, so looks better at 30   
+          new Cabana()            { FramesPerSecond = 20 },  // Should be max of 22 given the 8*144
+          //new Bench()             { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
+          //new Demo()              { FramesPerSecond = 40 },  // Runs flame effect, so looks better at 30   
+          new TV()                { FramesPerSecond = 12 },  // Runs flame effect, so looks better at 30   
           new Tree()              { FramesPerSecond = 24 },  // Runs CharlieBrownTree, looks better at 30
-          new Mirror()            { FramesPerSecond = 30 },  // Runs CharlieBrownTree, looks better at 30
-          new ShopCupboards()     { FramesPerSecond = 24 },  
-          new ShopEastWindows()   { FramesPerSecond = 24 },  
-          //new ShopSouthWindows { }
-          new ShopSouthWindows1() { FramesPerSecond = 24 },  
-          new ShopSouthWindows2() { FramesPerSecond = 24 },  
-          new ShopSouthWindows3() { FramesPerSecond = 24 },  
+          //new Mirror()            { FramesPerSecond = 30 },  // Runs CharlieBrownTree, looks better at 30
+          new ShopCupboards()     { FramesPerSecond = 12 },  
+          //new ShopEastWindows()   { FramesPerSecond = 24 },  
+          new ShopSouthWindows    { FramesPerSecond = 24  },
+          //new ShopSouthWindows1() { FramesPerSecond = 22 },  
+          //new ShopSouthWindows2() { FramesPerSecond = 22 },  
+          //new ShopSouthWindows3() { FramesPerSecond = 22 },  
         };
 
         protected static void myCancelKeyPressHandler(object sender, ConsoleCancelEventArgs args)
