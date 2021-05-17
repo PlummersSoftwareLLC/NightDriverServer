@@ -123,18 +123,18 @@ namespace NightDriver
         void WorkerDrawAndSendLoop()
         {
             DateTime lastSpareTimeReset = DateTime.UtcNow;
+            DateTime timeLastFrame = DateTime.UtcNow - TimeSpan.FromSeconds(1.0 / FramesPerSecond);
 
             for (;;)
             {
-                DateTime timeStart = DateTime.UtcNow;
+                DateTime timeNext = timeLastFrame + TimeSpan.FromSeconds(1.0 / FramesPerSecond);
+                DrawAndEnqueueAll(timeNext);
+                timeLastFrame = timeNext;
 
-                DrawAndEnqueueAll();
-
-                uint ms = (uint)(1000 * (1.0f / FramesPerSecond));
-                TimeSpan delay = TimeSpan.FromMilliseconds(ms) - (DateTime.UtcNow - timeStart);
+                TimeSpan delay = timeNext - DateTime.UtcNow;
                 if (delay.TotalMilliseconds > 0)
                 {
-                    Thread.Sleep(delay);
+                    Thread.Sleep((int) delay.TotalMilliseconds);
                 }
                 else
                 {
@@ -142,8 +142,8 @@ namespace NightDriver
                     Thread.Sleep(10);
                 }
 
-                uint spare = (uint)(delay.TotalMilliseconds <= 0 ? 0 : delay.TotalMilliseconds);
-                SpareTime = Math.Min(SpareTime, spare);
+                double spare = delay.TotalMilliseconds <= 0 ? 0 : delay.TotalMilliseconds;
+                SpareTime = Math.Min(SpareTime, (uint) spare);
 
                 ConsoleApp.Stats.SpareMilisecondsPerFrame = (uint)delay.TotalMilliseconds;
 
@@ -173,7 +173,7 @@ namespace NightDriver
             private set;
         } = "[None]";
 
-        public void DrawAndEnqueueAll()
+        public void DrawAndEnqueueAll(DateTime timestamp)
         {
             DateTime timeStart2 = DateTime.UtcNow;
 
@@ -192,14 +192,9 @@ namespace NightDriver
             if ((DateTime.UtcNow - timeStart2).TotalSeconds > 0.25)
                 ConsoleApp.Stats.WriteLine("MAIN2 DELAY");
 
-            DateTime timeStart = DateTime.UtcNow;
-
             foreach (var controller in LightStrips)
                 if (controller.ReadyForData)
-                    controller.CompressAndEnqueueData(LEDs, timeStart);
-
-            if ((DateTime.UtcNow - timeStart).TotalSeconds > 0.25)
-                ConsoleApp.Stats.WriteLine("MAIN1 DELAY");
+                    controller.CompressAndEnqueueData(LEDs, timestamp);
         }
 
         public override uint Width
@@ -896,8 +891,8 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.51", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false) {  },
-            new LightStrip("192.168.1.42", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)  {  },
+            new LightStrip("192.168.1.61", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false) {  },
+            new LightStrip("192.168.1.51", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)  {  },
             new LightStrip("192.168.1.39", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false) {  },
             new LightStrip("192.168.1.41", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) {  },
         };
@@ -968,13 +963,25 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.173", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
+            new LightStrip("192.168.1.243", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 3.0, MaxSpeed = 150 } )
+            /*
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow)
+            {
+                _Density = 1,
+                _EveryNthDot = 10,
+                _DotSize = 2,
+                _LEDColorPerSecond = 0,
+                _LEDScrollSpeed = 5,
+                _Brightness = .0750
+            })
+            */
 
-            new ScheduledEffect(ScheduledEffect.AllDays,  0,  24, EffectsDatabase.Football_Effect_Seattle),
+        //    new ScheduledEffect(ScheduledEffect.AllDays,  0,  24, EffectsDatabase.Football_Effect_Seattle),
 
         
         //new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.ChristmasLightsFast),
@@ -983,10 +990,10 @@ namespace NightDriver
         //new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.TwinkleChristmasLights),
 
 
-        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 1)),
+        new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 4)),
 
         //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
-        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, false) { _Cooling = 15000, _Drift = 1, _SparkHeight = 3, _Sparks = 1, _Reversed = true, _SparkProbability = 0.5, _Mirrored = true } ),
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true) { _Cooling = 1000  } ),
         //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 2.0, MaxSpeed = 30 } )
         //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
         //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.QuietColorStars),
@@ -1024,6 +1031,35 @@ namespace NightDriver
         public override LightStrip[] LightStrips        { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
         protected override CRGB[] LEDs                  { get { return _LEDs; } }
+    };
+
+    // NorthWall
+    //
+    // Location definition for the north wall accent lighting
+
+    public class NorthWall : Location
+    {
+        const bool compressData = true;
+        const int WALL_LENGTH = 2 * 144;
+
+        private CRGB[] _LEDs = InitializePixels<CRGB>(WALL_LENGTH * 2);
+
+        private LightStrip[] _StripControllers =
+        {
+            // There are two pieces to this, each comprising half of it
+
+            new LightStrip("192.168.1.62", "WALLNW", compressData, WALL_LENGTH, 1, 0, false)           {  },
+            new LightStrip("192.168.1.63", "WALLNE", compressData, WALL_LENGTH, 1, WALL_LENGTH, false) {  } 
+        };
+
+        public ScheduledEffect[] _LEDEffects =
+        {
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 1) )
+        };
+
+        public override LightStrip[] LightStrips { get { return _StripControllers; } }
+        public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
+        protected override CRGB[] LEDs { get { return _LEDs; } }
     };
 
     // Demo
@@ -1220,7 +1256,7 @@ namespace NightDriver
                 _Blend = true
             })
             */
-           new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Red))
+           new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Red, 2))
     };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
@@ -1399,11 +1435,11 @@ namespace NightDriver
         {
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
 
-                new PaletteEffect(true ? Palette.Rainbow : new Palette( new CRGB[] {  new CRGB(0, 0x4f, 0xff), } ))
+                new PaletteEffect(false ? Palette.Rainbow : new Palette( new CRGB[] {  CRGB.Orange, CRGB.Green, CRGB.Blue } ))
                 {
                     _Density = (Double)Palette.Rainbow.OriginalSize / WINDOW_LENGTH, 
                     _LEDScrollSpeed = 0, 
-                    _LEDColorPerSecond = .05, 
+                    _LEDColorPerSecond = false ? 0.05 : 0, 
                     _DotSize = WINDOW_1_LENGTH, 
                     _EveryNthDot = WINDOW_1_LENGTH, 
                     _Brightness = 1,
@@ -1443,9 +1479,9 @@ namespace NightDriver
         };
         private static readonly ScheduledEffect[] _LEDEffects =
         {
-            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.Football_Effect_Seattle),
+            //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.Football_Effect_Seattle),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.ChristmasLights),
-            //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.GetBlackbodyHeatColor(0.80).fadeToBlackBy(0.75), 1))
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.GetBlackbodyHeatColor(0.80), 4))
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.Green, 2)),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow)
             //    {

@@ -43,7 +43,7 @@ namespace NightDriver
         public bool RedGreenSwap = false;
         public Location Location;
 
-        public const int BatchSize = 10;
+        public const int BatchSize = 1;
         public const double BatchTimeout = 1.0;
 
         private ConcurrentQueue<byte[]> DataQueue = new ConcurrentQueue<byte[]>();
@@ -330,7 +330,7 @@ namespace NightDriver
                             else
                             {
                                 // Console.WriteLine("Sent " + bytesSent + " to " + HostName);
-                                double framesPerSecond = (double)((DateTime.UtcNow - _timeLastSend).TotalSeconds);
+                                double  framesPerSecond = (double)((DateTime.UtcNow - _timeLastSend).TotalSeconds);
                             }
                         }
                         catch (SocketException ex)

@@ -160,7 +160,7 @@ public class FireworksEffect : LEDEffect
             }
             ParticleSize = (1 - fade) * (graphics.DotCount / 500.0);
             ParticleSize = Math.Max(1, ParticleSize);
-            graphics.DrawPixels(star._position, (uint)ParticleSize, c);
+            graphics.DrawPixels(star._position, ParticleSize, c);
 
         }
 

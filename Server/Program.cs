@@ -60,17 +60,20 @@ namespace NightDriver
         internal static Location [] g_AllSites = 
         { 
           new Cabana()            { FramesPerSecond = 20 },  // Should be max of 22 given the 8*144
-          //new Bench()             { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
-          //new Demo()              { FramesPerSecond = 40 },  // Runs flame effect, so looks better at 30   
-          new TV()                { FramesPerSecond = 12 },  // Runs flame effect, so looks better at 30   
+          new Bench()             { FramesPerSecond = 20 },  // Runs flame effect, so looks better at 30   
+          new TV()                { FramesPerSecond = 1  },  // Runs flame effect, so looks better at 30   
           new Tree()              { FramesPerSecond = 24 },  // Runs CharlieBrownTree, looks better at 30
-          //new Mirror()            { FramesPerSecond = 30 },  // Runs CharlieBrownTree, looks better at 30
-          new ShopCupboards()     { FramesPerSecond = 12 },  
-          //new ShopEastWindows()   { FramesPerSecond = 24 },  
-          new ShopSouthWindows    { FramesPerSecond = 24  },
+          new ShopCupboards()     { FramesPerSecond = 20 },  
+          new ShopEastWindows()   { FramesPerSecond = 1  },  
+          new ShopSouthWindows    { FramesPerSecond = 10 },
+
+          //new NorthWall()         { FramesPerSecond = 1  },
           //new ShopSouthWindows1() { FramesPerSecond = 22 },  
           //new ShopSouthWindows2() { FramesPerSecond = 22 },  
           //new ShopSouthWindows3() { FramesPerSecond = 22 },  
+
+          //new Demo()              { FramesPerSecond = 40 },  // Runs flame effect, so looks better at 30   
+
         };
 
         protected static void myCancelKeyPressHandler(object sender, ConsoleCancelEventArgs args)
@@ -109,11 +112,17 @@ namespace NightDriver
 
                         // If user presses a command key like 'c' to clear, handle it here
 
-                        if (Console.KeyAvailable)
+                        try
                         {
-                            ConsoleKeyInfo cki = Console.ReadKey();
-                            if (cki.KeyChar == 'c')
-                                Console.Clear();
+                            if (Console.KeyAvailable)
+                            {
+                                ConsoleKeyInfo cki = Console.ReadKey();
+                                if (cki.KeyChar == 'c')
+                                    Console.Clear();
+                            }
+                        }
+                        catch
+                        {
                         }
                     }
                 }
