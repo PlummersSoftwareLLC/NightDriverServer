@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 
@@ -73,8 +74,16 @@ namespace NightDriver
           //new ShopSouthWindows3() { FramesPerSecond = 22 },  
 
           //new Demo()              { FramesPerSecond = 40 },  // Runs flame effect, so looks better at 30   
-
         };
+
+        public static Location[] Locations
+        {
+            get
+            {
+                return g_AllSites;
+            }
+        }
+
 
         protected static void myCancelKeyPressHandler(object sender, ConsoleCancelEventArgs args)
         {
