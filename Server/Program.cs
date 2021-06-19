@@ -61,7 +61,8 @@ namespace NightDriver
         { 
           new Cabana()            { FramesPerSecond = 20 },  // Should be max of 22 given the 8*144
           new Bench()             { FramesPerSecond = 20 },  // Runs flame effect, so looks better at 30   
-          new TV()                { FramesPerSecond = 1  },  // Runs flame effect, so looks better at 30   
+          new Monitor()           { FramesPerSecond = 30 },  // Lights on back of my monitor
+	  new TV()                { FramesPerSecond = 1  },  // Runs flame effect, so looks better at 30   
           new Tree()              { FramesPerSecond = 24 },  // Runs CharlieBrownTree, looks better at 30
           new ShopCupboards()     { FramesPerSecond = 20 },  
           new ShopEastWindows()   { FramesPerSecond = 1  },  

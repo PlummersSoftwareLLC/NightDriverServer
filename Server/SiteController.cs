@@ -1,4 +1,5 @@
-﻿using System;
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
@@ -949,6 +950,43 @@ namespace NightDriver
         protected override CRGB[] LEDs { get { return _LEDs; } }
     };
 
+
+    // Monitor
+    //
+    // The lights on the back of my monitor
+
+    public class Monitor : Location
+    {
+	const bool compressData = true;
+        const int  MONITOR_LENGTH = 200;
+
+        private CRGB[] _LEDs = InitializePixels<CRGB>(MONITOR_LENGTH);
+
+        private LightStrip[] _StripControllers =
+        {
+            new LightStrip("192.168.1.149", "MONITOR", compressData, MONITOR_LENGTH, 1, 0, false) {  }  
+        };
+
+	public ScheduledEffect[] _LEDEffects =
+        {
+	    //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 4)),
+
+	    new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
+                new PaletteEffect(false ? Palette.Rainbow : new Palette( new CRGB[] {  new CRGB(0, 0x8F, 0xFF), } ))
+                {
+                    _Density = 0.003, _LEDScrollSpeed = 0, _LEDColorPerSecond = .3, _DotSize = 1, _EveryNthDot = 1, _Brightness = 1
+                }
+            ),
+
+        };
+
+        public override LightStrip[] LightStrips        { get { return _StripControllers; } }
+        public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
+        protected override CRGB[] LEDs                  { get { return _LEDs; } }
+    };
+
+
+
     // Bench
     //
     // Location definition for the test rig on the workbench
@@ -1032,6 +1070,7 @@ namespace NightDriver
         public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
         protected override CRGB[] LEDs                  { get { return _LEDs; } }
     };
+
 
     // NorthWall
     //
