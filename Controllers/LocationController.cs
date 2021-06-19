@@ -20,7 +20,7 @@ namespace WebHost.Controllers
         [HttpGet]
         public IEnumerable<NightDriver.Location> GetLocations()
         {
-            return NightDriver.ConsoleApp.Locations;
+            return NightDriver.ConsoleApp.Locations;        
         }
 
         [HttpGet("{id:int}")]

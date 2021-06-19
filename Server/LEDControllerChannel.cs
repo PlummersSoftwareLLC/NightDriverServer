@@ -31,7 +31,7 @@ using System.Collections.Generic;
 
 namespace NightDriver
 {
-    public abstract class LEDControllerChannel
+    public class LEDControllerChannel
     {
         public string HostName;
         public string FriendlyName;
@@ -102,7 +102,7 @@ namespace NightDriver
             _Worker.Start();
         }
 
-        public bool HasSocket       // Is there a socket at all yet?
+        internal bool HasSocket       // Is there a socket at all yet?
         {
             get
             {
@@ -113,7 +113,7 @@ namespace NightDriver
             }
         }
 
-        public bool ReadyForData    // Is there a socket and is it connected to the chip?
+        internal bool ReadyForData    // Is there a socket and is it connected to the chip?
         {
             get
             {
@@ -124,20 +124,20 @@ namespace NightDriver
             }
         }
 
-        public bool NeedsClockStream
+        internal bool NeedsClockStream
         {
             get;
             set;
         } = false;
 
-        public bool Supports64BitClock
+        internal bool Supports64BitClock
         {
             get;
             set;
         } = true;
 
 
-        public uint MinimumSpareTime => (uint)_HostControllerSockets.Min(controller => controller.Value.BytesPerSecond);
+        internal uint MinimumSpareTime => (uint)_HostControllerSockets.Min(controller => controller.Value.BytesPerSecond);
 
         public uint BytesPerSecond
         {
@@ -170,8 +170,13 @@ namespace NightDriver
             return null;
         }
 
-        protected abstract byte[] GetDataFrame(CRGB[] MainLEDs, DateTime timeStart);
+        /* BUGBUG Could be abstract except for serialization */
 
+        protected virtual byte[] GetDataFrame(CRGB[] MainLEDs, DateTime timeStart)
+        {
+            throw new ApplicationException("Should never hit base class GetDataFrame");
+        }
+        
         protected virtual byte[] GetClockFrame(DateTime timeStart)
         {
             // The timeOffset is how far in the future frames are generated for.  If the chips have a 2 second buffer, you could
@@ -351,6 +356,7 @@ namespace NightDriver
     //
     // Wrapper for .Net Socket so that we can track the number of bytes sent and so on
 
+    [Serializable]
     public class ControllerSocket
     {
         public  Socket      _socket;
@@ -361,7 +367,7 @@ namespace NightDriver
 
         private uint BytesSentSinceFrame = 0;
 
-        public string HostName;
+        public string HostName { get; set; }
 
         public bool IsDead { get; protected set; } = false;
 

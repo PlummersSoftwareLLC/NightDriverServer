@@ -72,13 +72,13 @@ namespace NightDriver
     // and it is later divied up to the various controllers.  So if you have 4000 LEDs, you might have
     // four strips with 1000 LEDs each, for example.  Combined with a list of effects, they consitute a site.
 
-    public abstract class Location : GraphicsBase
+    public class Location : GraphicsBase
     {
         protected DateTime StartTime;
         protected System.Threading.Thread _Thread;
-        protected abstract CRGB[] LEDs { get; }
-        public abstract LightStrip[] LightStrips { get; }
-        public abstract ScheduledEffect[] LEDEffects { get; }
+        protected virtual CRGB[] LEDs { get; }
+        public virtual LightStrip[] LightStrips { get; }
+        public virtual ScheduledEffect[] LEDEffects { get; }
 
         public Location()
         {
@@ -891,10 +891,10 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.61", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false) {  },
-            new LightStrip("192.168.1.51", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)  {  },
-            new LightStrip("192.168.1.39", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false) {  },
-            new LightStrip("192.168.1.41", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) {  },
+            new LightStrip("192.168.8.4", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false) {  },          // 4
+            new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)  {  },          // 5
+            new LightStrip("192.168.8.6", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false) {  },          // 6
+            new LightStrip("192.168.8.7", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) {  },          // 7
         };
 
         public ScheduledEffect[] _GameDayLEDEffects =
@@ -957,18 +957,22 @@ namespace NightDriver
     {
         const bool compressData = true;
         const int BENCH_START   = 0;
-        const int BENCH_LENGTH = 3*144;
+        const int BENCH_LENGTH = 1*144;
 
         private CRGB[] _LEDs    = InitializePixels<CRGB>(BENCH_LENGTH);
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.243", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
+            new LightStrip("192.168.1.199", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
-            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 3.0, MaxSpeed = 150 } )
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true) { _Cooling = 3750, _Drift = 1, _SparkHeight = 4, _SparkProbability = 0.25  } ),
+
+            // new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 5, MaxSpeed = 50 } )
+            
             /*
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow)
             {
@@ -990,10 +994,9 @@ namespace NightDriver
         //new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.TwinkleChristmasLights),
 
 
-        new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 4)),
+        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 4)),
 
         //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
-        //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true) { _Cooling = 1000  } ),
         //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 2.0, MaxSpeed = 30 } )
         //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),
         //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.QuietColorStars),
@@ -1116,7 +1119,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.52", "TREE", compressData, TREE_LENGTH, 1, TREE_START, false, 0, false),
+            new LightStrip("192.168.8.11", "TREE", compressData, TREE_LENGTH, 1, TREE_START, false, 0, false),
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1288,10 +1291,10 @@ namespace NightDriver
         private LightStrip[] _StripControllers =
         {
 
-            new LightStrip("192.168.1.37", "CUPBOARD1", compressData, CUPBOARD_1_LENGTH, 1, CUPBOARD_1_START, false),
-            new LightStrip("192.168.1.47", "CUPBOARD2", compressData, CUPBOARD_2_LENGTH, 1, CUPBOARD_2_START, false),
-            new LightStrip("192.168.1.49", "CUPBOARD3", compressData, CUPBOARD_3_LENGTH, 1, CUPBOARD_3_START, false),  // WHOOPS
-            new LightStrip("192.168.1.46", "CUPBOARD4", compressData, CUPBOARD_4_LENGTH, 1, CUPBOARD_4_START, false),
+            new LightStrip("192.168.8.12", "CUPBOARD1", compressData, CUPBOARD_1_LENGTH, 1, CUPBOARD_1_START, false),
+            new LightStrip("192.168.8.13", "CUPBOARD2", compressData, CUPBOARD_2_LENGTH, 1, CUPBOARD_2_START, false),
+            new LightStrip("192.168.8.14", "CUPBOARD3", compressData, CUPBOARD_3_LENGTH, 1, CUPBOARD_3_START, false),  // WHOOPS
+            new LightStrip("192.168.8.15", "CUPBOARD4", compressData, CUPBOARD_4_LENGTH, 1, CUPBOARD_4_START, false),
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1426,9 +1429,9 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.34", "WINDOW1", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
-            new LightStrip("192.168.1.35", "WINDOW2", compressData, WINDOW_2_LENGTH, 1, WINDOW_2_START, false),
-            new LightStrip("192.168.1.36", "WINDOW3", compressData, WINDOW_3_LENGTH, 1, WINDOW_3_START, false),
+            new LightStrip("192.168.8.8",  "WINDOW1", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
+            new LightStrip("192.168.8.9",  "WINDOW2", compressData, WINDOW_2_LENGTH, 1, WINDOW_2_START, false),
+            new LightStrip("192.168.8.10", "WINDOW3", compressData, WINDOW_3_LENGTH, 1, WINDOW_3_START, false),
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1475,13 +1478,14 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {           // 192.168.1.18
-            new LightStrip("192.168.1.48", "WINDOWEAST", compressData, WINDOW_2_LENGTH, 1, WINDOW_2_START, false),
+            new LightStrip("192.168.8.16", "WINDOWEAST", compressData, WINDOW_2_LENGTH, 1, WINDOW_2_START, false),
         };
         private static readonly ScheduledEffect[] _LEDEffects =
         {
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.Football_Effect_Seattle),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.ChristmasLights),
-            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.GetBlackbodyHeatColor(0.80), 4))
+            //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.GetBlackbodyHeatColor(0.80), 4))
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.Cyan, 4))
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.Green, 2)),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow)
             //    {
