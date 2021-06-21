@@ -309,11 +309,11 @@ namespace NightDriver
         public static LEDEffect MarqueeEffect => new PaletteEffect(Palette.Rainbow)
         {
             _Density = .5,
-            _EveryNthDot = 4,
-            _DotSize = 2,
+            _EveryNthDot = 7,
+            _DotSize = 3,
             _LEDColorPerSecond = 0,
-            _LEDScrollSpeed = 10,
-            _Brightness = 0.1,
+            _LEDScrollSpeed = 30,
+            _Brightness = 1.0,
             _Mirrored = true
         };
 
@@ -501,19 +501,6 @@ namespace NightDriver
             Palette = new Palette(CRGB.HotStars)
         };
 
-        public static LEDEffect ColorSliders => new StarEffect<PaletteStar>
-        {
-            Blend = true,
-            NewStarProbability = .25,
-            StarPreignitonTime = 0.0,
-            StarIgnition = 1.0,
-            StarHoldTime = 0.0,
-            StarFadeTime = 1.0,
-            StarSize = 1,
-            MaxSpeed = 0,
-            Palette = Palette.Rainbow
-        };
-
         public static LEDEffect RainbowMiniLites => new PaletteEffect(Palette.SmoothRainbow ) 
         {
             _Density = .1,
@@ -620,24 +607,6 @@ namespace NightDriver
             _DotSize = 5,
             _LEDColorPerSecond = 0,
             _LEDScrollSpeed = 20,
-        };
-
-        public static LEDEffect NeonSpears => new PaletteEffect(new Palette(CRGB.RainbowStripes))
-        {
-            _Density = 0.001,
-            _EveryNthDot = 1,
-            _DotSize = 1,
-            _LEDColorPerSecond = 10,
-            _LEDScrollSpeed = 0,
-        };
-
-        public static LEDEffect Spears2 => new PaletteEffect(new Palette(CRGB.Rainbow))
-        {
-            _Density = 1.0/144.0,
-            _EveryNthDot = 1,
-            _DotSize = 1,
-            _LEDColorPerSecond = 2,
-            _LEDScrollSpeed = 0,
         };
 
         public static LEDEffect C9 => new PaletteEffect(new Palette(CRGB.VintageChristmasLights))
@@ -825,8 +794,9 @@ namespace NightDriver
             _Density = 2,
             _EveryNthDot = 12,
             _DotSize = 3,
-            _LEDColorPerSecond = 0,
+            _LEDColorPerSecond = 2,
             _LEDScrollSpeed = 40,
+            _Mirrored = true,
 
         };
 
@@ -901,13 +871,23 @@ namespace NightDriver
         {
             // Intense Effects for Daytime Hours
 
-            new ScheduledEffect(ScheduledEffect.AllDays,  9, 21,  EffectsDatabase.Football_Effect_Seattle),
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22,  EffectsDatabase.Football_Effect_Seattle),
         };
 
 
         public ScheduledEffect[] _LEDEffects =
         {
             // Intense Effects for Daytime Hours
+
+            // Busy Stuff
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.SlowNeonRails ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.ColorTunnel ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.FastColorSpokes ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.RainbowStrip ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.RainbowMiniLites ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.MarqueeEffect ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.ColorCycleTube ),
 
             // Christmas new ScheduledEffect(ScheduledEffect.AllDays,  9, 21, EffectsDatabase.ChristmasTwinkleStarEffect),
 
@@ -920,6 +900,8 @@ namespace NightDriver
            
                 // Quiet Early AM
 
+            new ScheduledEffect(ScheduledEffect.AllDays,  22, 23, new SimpleColorFillEffect(CRGB.RandomSaturatedColor, 2)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  23, 24, new SimpleColorFillEffect(CRGB.RandomSaturatedColor, 2)),
             new ScheduledEffect(ScheduledEffect.AllDays,  0,  1, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.90f), 4)),
             new ScheduledEffect(ScheduledEffect.AllDays,  1,  2, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.90f), 4)),
             new ScheduledEffect(ScheduledEffect.AllDays,  2,  3, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.90f), 4)),
@@ -933,6 +915,8 @@ namespace NightDriver
             new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.QuietBlueStars),
             new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.QuietColorStars),
             // new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.SparseChristmasLights),
+
+
         };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
@@ -957,19 +941,26 @@ namespace NightDriver
     {
         const bool compressData = true;
         const int BENCH_START   = 0;
-        const int BENCH_LENGTH = 1*144;
+        const int BENCH_LENGTH = 75;
 
         private CRGB[] _LEDs    = InitializePixels<CRGB>(BENCH_LENGTH);
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.199", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
+            new LightStrip("192.168.8.235", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.MarqueeEffect ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.SlowNeonRails ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ColorTunnel ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.FastColorSpokes ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.RainbowStrip ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.RainbowMiniLites ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ColorCycleTube ),
 
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true) { _Cooling = 3750, _Drift = 1, _SparkHeight = 4, _SparkProbability = 0.25  } ),
+            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true) { _Cooling = 3750, _Drift = 1, _SparkHeight = 4, _SparkProbability = 0.25  } ),
 
             // new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireworksEffect() { NewParticleProbability = 5, MaxSpeed = 50 } )
             
