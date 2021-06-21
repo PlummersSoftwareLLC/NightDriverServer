@@ -3,9 +3,22 @@ using System.Collections;
 using System.Collections.Generic;
 using NightDriver;
 
-public abstract class LEDEffect 
+[Serializable]
+public class LEDEffect 
 {
-    protected abstract void Render(ILEDGraphics graphics);
+    public virtual string EffectName
+    {
+        get
+        {
+            return this.GetType().Name;
+        }
+    }
+
+    protected virtual void Render(ILEDGraphics graphics)
+    {
+        // BUGBUG class and this methoi would be abstract except for serialization requiremets
+        throw new ApplicationException("Render Base Class called - This is abstract");
+    }
 
     public void DrawFrame(ILEDGraphics graphics)
     {

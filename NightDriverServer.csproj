@@ -18,5 +18,4 @@
     <None Remove="wwwroot\template.html" />
   </ItemGroup>
 
-
 </Project>
