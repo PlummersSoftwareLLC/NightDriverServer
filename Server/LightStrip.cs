@@ -81,7 +81,7 @@ namespace NightDriver
 
                 if (Math.Abs(Response.currentClock - epoch) < 60.0)
                 {
-                    //epoch += (epoch - Response.currentClock) * .5;
+                    //epoch += (epoch - Response.currentClock) * 0.5;
                 }
 
                 ulong seconds = (ulong)epoch;                                       // Whole part of time number (left of the decimal point)

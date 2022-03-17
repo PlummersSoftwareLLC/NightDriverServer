@@ -94,7 +94,8 @@ namespace NightDriver
                 return DataQueue.Count;
             }
         }
-
+        public const int MaxQueueDepth = 20;
+        
         public uint Offset
         {
             get;
@@ -156,7 +157,10 @@ namespace NightDriver
             get
             {
                 ControllerSocket controllerSocket = ControllerSocketForHost(HostName);
-                if (null == controllerSocket || controllerSocket._socket == null || !controllerSocket._socket.Connected)
+                if (null == controllerSocket || 
+                    controllerSocket._socket == null || 
+                    !controllerSocket._socket.Connected ||
+                    DataQueue.Count > MaxQueueDepth)
                     return false;
                 return true;
             }
@@ -255,21 +259,15 @@ namespace NightDriver
 
         private int _iPacketCount = 0;
 
-        public void CompressAndEnqueueData(CRGB[] MainLEDs, DateTime timeStart)
+        public bool CompressAndEnqueueData(CRGB[] MainLEDs, DateTime timeStart)
         {
-            if (DataQueue.Count > 50)
-            {
-//              ConsoleApp.Stats.WriteLine("Queue full so dicarding frame for " + HostName);
-                return;
-            }
-
             // If there is already a socket open, we will use that; otherwise, a new connection will be opened and if successful
             // it will be placed into the _HostSockets concurrent dictionary
 
             if (_HostControllerSockets.ContainsKey(HostName) == false && (DateTime.UtcNow - _timeLastSend).TotalSeconds < 2)
             {
                 ConsoleApp.Stats.WriteLine("Too early to retry for " + HostName);
-                return;
+                return false;
             }
             _timeLastSend = DateTime.UtcNow;
 
@@ -277,7 +275,12 @@ namespace NightDriver
             if (null == controllerSocket)
                 _HostControllerSockets[HostName] = controllerSocket;
 
-            
+            if (DataQueue.Count > MaxQueueDepth)
+            {
+                // ConsoleApp.Stats.WriteLine("Queue full so dicarding frame for " + HostName);
+                return false;
+            }
+
             if (_iPacketCount % 100 == 0 && NeedsClockStream)
             {
                 byte [] msgclock = GetClockFrame(timeStart);
@@ -292,11 +295,10 @@ namespace NightDriver
             {
                 msg = msgraw;
             }
-
             
             DataQueue.Enqueue(msg);
             _iPacketCount++;
-
+            return true;
         }
 
         bool ShouldSendBatch
@@ -335,19 +337,8 @@ namespace NightDriver
                           return new ControllerSocket(hostname);
                       });
 
-                if (false == controllerSocket.EnsureConnected())
-                {
-                    if (controllerSocket.IsDead)
-                    {
-                        ConsoleApp.Stats.WriteLine("Closing disconnected socket: " + HostName);
-                        ControllerSocket oldSocket;
-                        _HostControllerSockets.TryRemove(HostName, out oldSocket);
-                    }
-                    Thread.Sleep(10);
-                    continue;
-                }
 
-                if (DataQueue.Count > 20)
+                if (DataQueue.Count >= MaxQueueDepth)
                 {
                     DataQueue.Clear();
                     ConsoleApp.Stats.WriteLine("Closing jammed socket: " + HostName);
@@ -357,6 +348,15 @@ namespace NightDriver
                     continue;
                 }
 
+
+                if (false == controllerSocket.EnsureConnected())
+                {
+                    ConsoleApp.Stats.WriteLine("Closing disconnected socket: " + HostName);
+                    ControllerSocket oldSocket;
+                    _HostControllerSockets.TryRemove(HostName, out oldSocket);
+                    Thread.Sleep(10);
+                    continue;
+                }
 
                 // Compose a message which is a binary block of N (where N is up to Count) dequeue packets all
                 // in a row, which is how the chips can actually process them
@@ -475,7 +475,7 @@ namespace NightDriver
                 if (DateTime.UtcNow - LastDataFrameTime < TimeSpan.FromSeconds(1))
                 {
                     ConsoleApp.Stats.WriteLine("Bailing connection as too early!");
-                    return false;
+                    return true;
                 }
                 LastDataFrameTime = DateTime.UtcNow;
                 _socket = new Socket(_ipAddress.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
@@ -520,14 +520,17 @@ namespace NightDriver
                 // Receive the response back from the socket we just sent to
                 int cbToRead = sizeof(SocketResponse);
                 byte[] buffer = new byte[cbToRead];
-                var readBytes = _socket.Receive(buffer, cbToRead, SocketFlags.None);
-
-                if (readBytes >= sizeof(SocketResponse) && buffer[0] >= sizeof(SocketResponse))
+                while (_socket.Available >= cbToRead)
                 {
-                    GCHandle pinnedArray = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-                    IntPtr pointer = pinnedArray.AddrOfPinnedObject();
-                    response = Marshal.PtrToStructure<SocketResponse>(pointer);
-                    pinnedArray.Free();
+                    var readBytes = _socket.Receive(buffer, cbToRead, SocketFlags.None);
+
+                    if (readBytes >= sizeof(SocketResponse) && buffer[0] >= sizeof(SocketResponse))
+                    {
+                        GCHandle pinnedArray = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+                        IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+                        response = Marshal.PtrToStructure<SocketResponse>(pointer);
+                        pinnedArray.Free();
+                    }
                 }
             }
 

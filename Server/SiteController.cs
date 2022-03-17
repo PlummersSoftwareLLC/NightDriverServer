@@ -977,7 +977,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.152", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
+            new LightStrip("192.168.8.205", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
