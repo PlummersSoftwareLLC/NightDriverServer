@@ -23,6 +23,10 @@ using System.Net.Sockets;
 using System.Linq;
 using System.Threading;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.IO;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 
 // LEDControllerChannel
 //
@@ -31,17 +35,50 @@ using System.Collections.Generic;
 
 namespace NightDriver
 {
+
+    [Serializable]
+    public struct SocketResponse
+    {
+        public UInt32 size;
+        public UInt32 flashVersion;
+        public double currentClock;
+        public double oldestPacket;
+        public double newestPacket;
+        public double brightness;
+        public UInt32 bufferSize;
+        public UInt32 bufferPos;
+        public UInt32 fpsDrawing;
+        public UInt32 watts;
+
+        public void Reset()
+        {
+            size         = 0;
+            flashVersion = 0;   
+            currentClock = 0;   
+            oldestPacket = 0;   
+            newestPacket = 0;   
+            brightness   = 0;
+            bufferSize   = 0;
+            bufferPos    = 0;
+            fpsDrawing   = 0;
+            watts        = 0;
+        }
+    };
+
     public class LEDControllerChannel
     {
         public string HostName;
         public string FriendlyName;
-        public bool CompressData = true;
-        public byte Channel = 0;
+        public bool   CompressData = true;
+        public byte   Channel = 0;
         public double Brightness = 1.0f;
-        public uint Connects = 0;
-        public uint Watts = 0;
-        public bool RedGreenSwap = false;
+        public uint   Connects = 0;
+        public uint   Watts = 0;
+        public bool   RedGreenSwap = false;
+
         public Location Location;
+
+        public SocketResponse Response;
 
         public const int BatchSize = 1;
         public const double BatchTimeout = 1.0;
@@ -102,6 +139,7 @@ namespace NightDriver
             _Worker.Start();
         }
 
+        
         internal bool HasSocket       // Is there a socket at all yet?
         {
             get
@@ -219,7 +257,7 @@ namespace NightDriver
 
         public void CompressAndEnqueueData(CRGB[] MainLEDs, DateTime timeStart)
         {
-            if (DataQueue.Count > 20)
+            if (DataQueue.Count > 50)
             {
 //              ConsoleApp.Stats.WriteLine("Queue full so dicarding frame for " + HostName);
                 return;
@@ -255,6 +293,7 @@ namespace NightDriver
                 msg = msgraw;
             }
 
+            
             DataQueue.Enqueue(msg);
             _iPacketCount++;
 
@@ -286,8 +325,6 @@ namespace NightDriver
         {
             // We delay-start a random fraction of a quarter second to stagger the workload so that the WiFi is a little more balanced
             
-            Thread.Sleep((int)(new Random().NextDouble() * 250));
-
             for (;;)
             {
                 ControllerSocket controllerSocket
@@ -297,7 +334,6 @@ namespace NightDriver
                           ConsoleApp.Stats.WriteLine("Connecting to " + HostName);
                           return new ControllerSocket(hostname);
                       });
-
 
                 if (false == controllerSocket.EnsureConnected())
                 {
@@ -310,6 +346,17 @@ namespace NightDriver
                     Thread.Sleep(10);
                     continue;
                 }
+
+                if (DataQueue.Count > 20)
+                {
+                    DataQueue.Clear();
+                    ConsoleApp.Stats.WriteLine("Closing jammed socket: " + HostName);
+                    ControllerSocket oldSocket;
+                    _HostControllerSockets.TryRemove(HostName, out oldSocket);
+                    Thread.Sleep(10);
+                    continue;
+                }
+
 
                 // Compose a message which is a binary block of N (where N is up to Count) dequeue packets all
                 // in a row, which is how the chips can actually process them
@@ -325,7 +372,8 @@ namespace NightDriver
                         {
                             uint bytesSent = 0;
                             if (!controllerSocket.IsDead)
-                                bytesSent = controllerSocket.SendData(msg);
+                                bytesSent = controllerSocket.SendData(msg, ref Response);
+
                             if (bytesSent != msg.Length)
                             {
                                 ConsoleApp.Stats.WriteLine("Could not write all bytes so closing socket for " + HostName);
@@ -366,7 +414,6 @@ namespace NightDriver
         private DateTime LastDataFrameTime;
 
         private uint BytesSentSinceFrame = 0;
-
         public string HostName { get; set; }
 
         public bool IsDead { get; protected set; } = false;
@@ -447,7 +494,12 @@ namespace NightDriver
             }
         }
 
-        public uint SendData(byte[] data)
+        // SocketResponse
+        //
+        // The response structure sent back to us when we deliver a frame of data to the NightDriverStrip
+
+
+        unsafe public uint SendData(byte[] data, ref SocketResponse response)
         {
             uint result = (uint)_socket.Send(data);
 
@@ -461,6 +513,24 @@ namespace NightDriver
             {
                 BytesSentSinceFrame += result;
             }
+
+            response.Reset();
+            if (result == data.Length)
+            {
+                // Receive the response back from the socket we just sent to
+                int cbToRead = sizeof(SocketResponse);
+                byte[] buffer = new byte[cbToRead];
+                var readBytes = _socket.Receive(buffer, cbToRead, SocketFlags.None);
+
+                if (readBytes >= sizeof(SocketResponse) && buffer[0] >= sizeof(SocketResponse))
+                {
+                    GCHandle pinnedArray = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+                    IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+                    response = Marshal.PtrToStructure<SocketResponse>(pointer);
+                    pinnedArray.Free();
+                }
+            }
+
             return result;
         }
     }

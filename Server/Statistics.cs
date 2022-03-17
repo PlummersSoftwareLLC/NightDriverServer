@@ -47,7 +47,7 @@ namespace NightDriver
         }
 
         const int ColumnWidth = 16;
-        const int ColumnHeight = 11;
+        const int ColumnHeight = 16;
         const int BufferTop = 36;
         const int topMargin = 3;
         const int bottomMargin = 0;
@@ -102,13 +102,19 @@ namespace NightDriver
             printf_xy(0, 3 + topMargin, "Socket");
             printf_xy(0, 4 + topMargin, "Status");
             printf_xy(0, 5 + topMargin, "Bytes/Sec");
-            printf_xy(0, 6 + topMargin, "Connects");
-            printf_xy(0, 7 + topMargin, "Queue Depth");
-            printf_xy(0, 8 + topMargin, "Offset [FPS]");
-            printf_xy(0, 8 + topMargin, "Effect Mode");
+            printf_xy(0, 6 + topMargin, "Clock");
+            printf_xy(0, 7 + topMargin, "Buffer");
+            printf_xy(0, 8 + topMargin, "Pwr/Brite");
+            printf_xy(0, 9 + topMargin, "gFPS");
+            printf_xy(0,10 + topMargin, "Connects");
+            printf_xy(0,11 + topMargin, "Queue Depth");
+            printf_xy(0,12 + topMargin, "Offset [FPS]");
+            printf_xy(0,13 + topMargin, "Effect Mode");
 
             uint totalBytes = 0;
             int x, y = 0;
+
+            double epoch = (DateTime.UtcNow.Ticks - DateTime.UnixEpoch.Ticks) / (double)TimeSpan.TicksPerSecond;
 
             for (int i = 0; i < allControllers.Count; i++)
             {
@@ -117,8 +123,11 @@ namespace NightDriver
                 x = (slot * ColumnWidth) % Console.WindowWidth;
                 y = (slot * ColumnWidth) / Console.WindowWidth * ColumnHeight;
 
+                var ver = allControllers[slot - 1].Response.flashVersion > 0 ?
+                          "v" + allControllers[slot - 1].Response.flashVersion.ToString() + "  " : "---";
+
                 Console.ForegroundColor = ConsoleColor.Gray;
-                printf_xy(x, y + topMargin, slot.ToString());
+                printf_xy(x, y + topMargin, slot.ToString() + " " + ver);
                 Console.ForegroundColor = ConsoleColor.White;
                 printf_xy(x, y + 1 + topMargin, allControllers[slot - 1].FriendlyName);
                 Console.ForegroundColor = ConsoleColor.Gray;
@@ -131,12 +140,19 @@ namespace NightDriver
                 printf_xy(x, y + 5 + topMargin, Spaces.Substring(0, ColumnWidth));
                 printf_xy(x, y + 5 + topMargin, Bar(allControllers[slot - 1].BytesPerSecond / 20000.00, ColumnWidth - 3));
                 totalBytes += allControllers[slot - 1].BytesPerSecond;
-                printf_xy(x, y + 6 + topMargin, allControllers[slot - 1].Connects.ToString() + " ");
-                printf_xy(x, y + 7 + topMargin, allControllers[slot - 1].QueueDepth.ToString() + " ");
+
+                var clock = allControllers[slot - 1].Response.currentClock > 0 ? (allControllers[slot - 1].Response.currentClock - epoch).ToString("F2") : "UNSET";
+                printf_xy(x, y + 6 + topMargin, Spaces.Substring(0, ColumnWidth));
+                printf_xy(x, y + 6 + topMargin, clock);
+                printf_xy(x, y + 7 + topMargin, allControllers[slot - 1].Response.bufferPos.ToString()+"/"+ allControllers[slot - 1].Response.bufferSize.ToString() + "  ");
+                printf_xy(x, y + 8 + topMargin, allControllers[slot - 1].Response.watts.ToString() + "W " + allControllers[slot - 1].Response.brightness.ToString("F0") + "%");
+                printf_xy(x, y + 9 + topMargin, allControllers[slot - 1].Response.fpsDrawing.ToString());
+                printf_xy(x, y + 10 + topMargin, allControllers[slot - 1].Connects.ToString() + " ");
+                printf_xy(x, y + 11 + topMargin, allControllers[slot - 1].QueueDepth.ToString() + " ");
                 if (allControllers[slot - 1].Location != null)
                 {
-                    printf_xy(x, y + 8 + topMargin, allControllers[slot - 1].TimeOffset.ToString("F2") + " [" + allControllers[slot - 1].Location.FramesPerSecond + "]");
-                    printf_xy(x, y + 9 + topMargin, allControllers[slot - 1].Location.CurrentEffectName.Left(ColumnWidth-1));
+                    printf_xy(x, y + 12 + topMargin, allControllers[slot - 1].TimeOffset.ToString("F2") + " [" + allControllers[slot - 1].Location.FramesPerSecond + "]");
+                    printf_xy(x, y + 13 + topMargin, allControllers[slot - 1].Location.CurrentEffectName.Left(ColumnWidth-1));
                 }
             }
 

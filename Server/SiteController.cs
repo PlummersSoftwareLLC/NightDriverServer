@@ -302,9 +302,10 @@ namespace NightDriver
         //           _Cooling = 100
         //        };
 
-        public static LEDEffect FireWindow => new FireEffect(5 * 144, true, new Palette(CRGB.BlueFlame))
+        public static LEDEffect FireWindow => new FireEffect(5 * 144, true,null) 
         {
-           _Cooling = 100
+           _Cooling = 400,
+           _Reversed = true
         };
 
         public static LEDEffect MarqueeEffect => new PaletteEffect(Palette.Rainbow)
@@ -976,7 +977,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.235", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
+            new LightStrip("192.168.8.152", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, false) {  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1140,7 +1141,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.11", "TREE", compressData, TREE_LENGTH, 1, TREE_START, false, 0, false),
+            new LightStrip("192.168.8.24", "TREE", compressData, TREE_LENGTH, 1, TREE_START, false, 0, false),
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1261,7 +1262,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.198", "TV",        compressData, TV_LENGTH,         1, TV_START, false) { }
+            new LightStrip("192.168.8.26", "TV",        compressData, TV_LENGTH,         1, TV_START, false) { }
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1314,7 +1315,7 @@ namespace NightDriver
 
             new LightStrip("192.168.8.12", "CUPBOARD1", compressData, CUPBOARD_1_LENGTH, 1, CUPBOARD_1_START, false),
             new LightStrip("192.168.8.13", "CUPBOARD2", compressData, CUPBOARD_2_LENGTH, 1, CUPBOARD_2_START, false),
-            new LightStrip("192.168.8.14", "CUPBOARD3", compressData, CUPBOARD_3_LENGTH, 1, CUPBOARD_3_START, false),  // WHOOPS
+            new LightStrip("192.168.8.175", "CUPBOARD3", compressData, CUPBOARD_3_LENGTH, 1, CUPBOARD_3_START, false),  // WHOOPS
             new LightStrip("192.168.8.15", "CUPBOARD4", compressData, CUPBOARD_4_LENGTH, 1, CUPBOARD_4_START, false),
         };
 
@@ -1335,7 +1336,7 @@ namespace NightDriver
     //
     // Location definition for the lights int the 3-window south shop bay window
 
-    /*
+    
     public class ShopSouthWindows1 : Location
     {
         const bool compressData = true;
@@ -1350,13 +1351,13 @@ namespace NightDriver
         
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.34", "WINDOW1", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
+            new LightStrip("192.168.8.8", "WINDOW1", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
-                // EffectsDatabase.FireWindow)
+                 //EffectsDatabase.FireWindow)
                 new SimpleColorFillEffect(CRGB.Orange, 1))
 
         };
@@ -1381,18 +1382,18 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.35", "WINDOW2", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
+            new LightStrip("192.168.8.9", "WINDOW2", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24,
-                new SimpleColorFillEffect(new CRGB(0,32,255), 1))
+                //new SimpleColorFillEffect(new CRGB(0,32,255), 1))
 
-                //EffectsDatabase.FireWindow
-                //new PaletteEffect(new Palette( new CRGB[] { CRGB.Blue, CRGB.Purple } )) { _Density = 0.0001, _DotSize = 1, _EveryNthDot = 1, _LEDColorPerSecond = 0.1 }
+                //EffectsDatabase.FireWindow)
+                //new PaletteEffect(new Palette( new CRGB[] { CRGB.Blue, CRGB.Purple } )) { _Density = 0.0001, _DotSize = 1, _EveryNthDot = 1, _LEDColorPerSecond = 0.1 })
              
-                //new SimpleColorFillEffect(CRGB.Blue, 1))
+                new SimpleColorFillEffect(CRGB.Blue, 1))
         };
 
 
@@ -1415,7 +1416,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.36", "WINDOW3", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
+            new LightStrip("192.168.8.10", "WINDOW3", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false),
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1430,7 +1431,6 @@ namespace NightDriver
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
         protected override CRGB[] LEDs { get { return _LEDs; } }
     }
-    */
     
     public class ShopSouthWindows : Location
     {

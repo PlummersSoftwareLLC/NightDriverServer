@@ -74,6 +74,15 @@ namespace NightDriver
                 // go up to 2 seconds, but I shoot for the middle of the buffer depth.  Right now it's calculated as using 
 
                 double epoch = (timeStart.Ticks - DateTime.UnixEpoch.Ticks + (TimeOffset * TimeSpan.TicksPerSecond)) / (double)TimeSpan.TicksPerSecond;
+                
+                // If the strip clock is within one minute of our clock, adjust the packet time by the amount that we
+                // differ.  This will cause more of the buffer to be used, and will help prevent cases where the buffer
+                // gets stale because the clock is behind.
+
+                if (Math.Abs(Response.currentClock - epoch) < 60.0)
+                {
+                    //epoch += (epoch - Response.currentClock) * .5;
+                }
 
                 ulong seconds = (ulong)epoch;                                       // Whole part of time number (left of the decimal point)
                 ulong uSeconds = (ulong)((epoch - (int)epoch) * 1000000);           // Fractional part of time (right of the decimal point)
