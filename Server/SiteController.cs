@@ -140,7 +140,7 @@ namespace NightDriver
                 else
                 {
                     ConsoleApp.Stats.WriteLine(this.GetType().Name + " dropped Frame by " + delay.TotalMilliseconds);
-                    Thread.Sleep(10);
+                    Thread.Sleep(1);
                 }
 
                 double spare = delay.TotalMilliseconds <= 0 ? 0 : delay.TotalMilliseconds;
@@ -864,9 +864,9 @@ namespace NightDriver
         private LightStrip[] _StripControllers =
         {
             new LightStrip("192.168.8.4", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false) {  },          // 4
-            new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)  {  },          // 5
-            new LightStrip("192.168.8.6", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false) {  },          // 6
-            new LightStrip("192.168.8.7", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) {  },          // 7
+//            new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)  {  },          // 5
+//            new LightStrip("192.168.8.6", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false) {  },          // 6
+//            new LightStrip("192.168.8.7", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) {  },          // 7
         };
 
         public ScheduledEffect[] _GameDayLEDEffects =

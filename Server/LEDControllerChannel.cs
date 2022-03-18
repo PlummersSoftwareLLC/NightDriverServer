@@ -45,10 +45,12 @@ namespace NightDriver
         public double oldestPacket;
         public double newestPacket;
         public double brightness;
+        public double wifiSignal;
         public UInt32 bufferSize;
         public UInt32 bufferPos;
         public UInt32 fpsDrawing;
         public UInt32 watts;
+        
 
         public void Reset()
         {
@@ -58,6 +60,7 @@ namespace NightDriver
             oldestPacket = 0;   
             newestPacket = 0;   
             brightness   = 0;
+            wifiSignal   = 0;
             bufferSize   = 0;
             bufferPos    = 0;
             fpsDrawing   = 0;
@@ -80,7 +83,7 @@ namespace NightDriver
 
         public SocketResponse Response;
 
-        public const int BatchSize = 1;
+        public const int BatchSize = 5;
         public const double BatchTimeout = 1.0;
 
         private ConcurrentQueue<byte[]> DataQueue = new ConcurrentQueue<byte[]>();
@@ -170,7 +173,7 @@ namespace NightDriver
         {
             get;
             set;
-        } = false;
+        } = true;
 
         internal bool Supports64BitClock
         {
@@ -333,7 +336,7 @@ namespace NightDriver
                     = _HostControllerSockets.GetOrAdd(HostName, (hostname) =>
                       {
                           Connects++;
-                          ConsoleApp.Stats.WriteLine("Connecting to " + HostName);
+                          //ConsoleApp.Stats.WriteLine("Connecting to " + HostName);
                           return new ControllerSocket(hostname);
                       });
 
@@ -351,7 +354,7 @@ namespace NightDriver
 
                 if (false == controllerSocket.EnsureConnected())
                 {
-                    ConsoleApp.Stats.WriteLine("Closing disconnected socket: " + HostName);
+                    //ConsoleApp.Stats.WriteLine("Closing disconnected socket: " + HostName);
                     ControllerSocket oldSocket;
                     _HostControllerSockets.TryRemove(HostName, out oldSocket);
                     Thread.Sleep(10);
@@ -417,6 +420,7 @@ namespace NightDriver
         public string HostName { get; set; }
 
         public bool IsDead { get; protected set; } = false;
+        public string FirmwareVersion { get; set; }
 
         public uint BytesPerSecond
         {
@@ -436,6 +440,7 @@ namespace NightDriver
             //ConsoleApp.Stats.WriteLine("Constructor for " + hostname);
             _remoteEP = null;
             Dns.BeginGetHostAddresses(HostName, OnDnsGetHostAddressesComplete, this);
+
         }
 
         private void OnDnsGetHostAddressesComplete(IAsyncResult result)
@@ -514,9 +519,9 @@ namespace NightDriver
                 BytesSentSinceFrame += result;
             }
 
-            response.Reset();
             if (result == data.Length)
             {
+                response.Reset();
                 // Receive the response back from the socket we just sent to
                 int cbToRead = sizeof(SocketResponse);
                 byte[] buffer = new byte[cbToRead];
@@ -531,6 +536,7 @@ namespace NightDriver
                         response = Marshal.PtrToStructure<SocketResponse>(pointer);
                         pinnedArray.Free();
                     }
+                    FirmwareVersion = "v" + response.flashVersion;
                 }
             }
 
