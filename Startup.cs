@@ -28,10 +28,10 @@ namespace WebHost
             services.AddControllers();
             services.AddCors(options =>
             {
-                options.AddPolicy("_myAllowSpecificOrigins",
+                options.AddDefaultPolicy(
                     builder =>
                     {
-                        builder.WithOrigins("http://localhost");
+                        builder.AllowAnyOrigin();
                     });
             });
 
@@ -52,7 +52,7 @@ namespace WebHost
             app.UseStaticFiles();
             app.UseRouting();
             app.UseAuthorization();
-            app.UseCors("_myAllowSpecificOrigins");
+            app.UseCors();
 
             app.UseEndpoints(endpoints =>
             {
