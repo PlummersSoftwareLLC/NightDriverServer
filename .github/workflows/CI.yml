@@ -13,8 +13,7 @@ jobs:
   build:
 
     env: 
-      ENABLE_DOCKER_PUSH: false
-#      ENABLE_DOCKER_PUSH: ${{ github.repository_owner == 'PlummersSoftwareLLC' && github.ref == 'refs/heads/master' }}
+      ENABLE_DOCKER_PUSH: ${{ github.repository_owner == 'PlummersSoftwareLLC' && github.ref == 'refs/heads/master' }}
 
     runs-on: ubuntu-latest
 
