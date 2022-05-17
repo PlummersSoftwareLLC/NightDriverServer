@@ -94,11 +94,22 @@ public class FireEffect : LEDEffect
         if (_Mirrored)
         {
             // Step 4.  Convert heat to LED colors
-            for (uint j = 0; j < (_Temperatures.Length) / 2; j++)
+            if (_Reversed)
             {
-                graphics.DrawPixel((uint)_Temperatures.Length - 1 - j, 0, ConvertHeatToColor(_Temperatures[j]));
-                graphics.DrawPixel( j, 0, ConvertHeatToColor(_Temperatures[j]));
+                for (uint j = 0; j < (_Temperatures.Length) / 2; j++)
+                {
+                    graphics.DrawPixel((uint)(_Temperatures.Length - 1 - j), 0, ConvertHeatToColor(_Temperatures[_Temperatures.Length - j - 1]));
+                    graphics.DrawPixel((uint)j, 0, ConvertHeatToColor(_Temperatures[_Temperatures.Length - j - 1]));
+                }
             }
+            else
+            {
+                for (uint j = 0; j < (_Temperatures.Length) / 2; j++)
+                {
+                    graphics.DrawPixel((uint)_Temperatures.Length - 1 - j, 0, ConvertHeatToColor(_Temperatures[j]));
+                    graphics.DrawPixel( j, 0, ConvertHeatToColor(_Temperatures[j]));
+                }
+           }
         }
         else
         {

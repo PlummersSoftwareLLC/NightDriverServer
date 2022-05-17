@@ -66,9 +66,8 @@ public class PaletteEffect : LEDEffect
                 count++;
 
             }
-            iColor += count * _Density / _Palette.OriginalSize;
-
-        }
+            iColor +=  count * (_Density / graphics.PixelsPerMeter) / cLength * _Palette.OriginalSize;
+        }   
     }
     
 }

@@ -83,7 +83,7 @@ namespace NightDriver
 
         public SocketResponse Response;
 
-        public const int BatchSize = 5;
+        public const int BatchSize = 3;
         public const double BatchTimeout = 1.0;
 
         private ConcurrentQueue<byte[]> DataQueue = new ConcurrentQueue<byte[]>();
@@ -138,6 +138,7 @@ namespace NightDriver
             RedGreenSwap = swapRedGreen;
 
             _Worker = new Thread(WorkerConnectAndSendLoop);
+            _Worker.Name = hostName + " Connect and Send Loop";
             _Worker.IsBackground = true;
             _Worker.Priority = ThreadPriority.BelowNormal;
             _Worker.Start();
@@ -292,6 +293,16 @@ namespace NightDriver
 
             // Optionally compress the data, but when we do, if the compressed is larger, we send the original
 
+            if (RedGreenSwap)
+            {
+                foreach(var led in MainLEDs)
+                {
+                    var temp = led.r;
+                    led.r = led.g;
+                    led.g = temp;
+                }
+            }
+            
             byte[] msgraw = GetDataFrame(MainLEDs, timeStart);
             byte[] msg = CompressData ? CompressFrame(msgraw) : msgraw;
             if (msg.Length >= msgraw.Length)
@@ -308,6 +319,9 @@ namespace NightDriver
         {
             get
             {
+                if (Location is null)
+                    return false;
+                    
                 if (DataQueue.Count() > Location.FramesPerSecond)                   // If a full second has accumulated
                     return true;
 
