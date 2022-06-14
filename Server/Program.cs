@@ -19,10 +19,8 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-
 namespace NightDriver
 {
-
     internal class ConsoleApp
     {
         private static bool bShouldExit = false;
@@ -60,15 +58,15 @@ namespace NightDriver
 
         internal static Location [] g_AllSites = 
         { 
-          new Cabana()            { FramesPerSecond = 20 },  // Should be max of 22 given the 8*144
-          new Bench()             { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
-	      new TV()                { FramesPerSecond = 1  },  // Runs flame effect, so looks better at 30   
+          new Cabana()            { FramesPerSecond = 14 },  // Should be max of 22 given the 8*144
+          // new Bench()             { FramesPerSecond = 24 },  // Runs flame effect, so looks better at 30   
+          new TV()                { FramesPerSecond = 1  },  // Runs flame effect, so looks better at 30   
           new Tree()              { FramesPerSecond = 24  },  // Runs CharlieBrownTree, looks better at 30
-          new ShopCupboards()     { FramesPerSecond = 20 },  
+          new ShopCupboards()     { FramesPerSecond = 10 },  
           new ShopEastWindows()   { FramesPerSecond = 1  },  
-          new ShopSouthWindows1() { FramesPerSecond = 3 },  
-          new ShopSouthWindows2() { FramesPerSecond = 3 },  
-          new ShopSouthWindows3() { FramesPerSecond = 3 },  
+          new ShopSouthWindows1() { FramesPerSecond = 30 },  
+          new ShopSouthWindows2() { FramesPerSecond = 30 },  
+          new ShopSouthWindows3() { FramesPerSecond = 30 },  
 
           //new Demo()              { FramesPerSecond = 40 },  // Runs flame effect, so looks better at 30   
           //new ShopSouthWindows    { FramesPerSecond = 1  },
