@@ -894,9 +894,9 @@ namespace NightDriver
             // Uncomment to test a single effect
             
             // new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ChristmasTwinkleStarEffect ),
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
-                    new PaletteEffect(new Palette(CRGB.Rainbow))
-            ),
+  //          new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
+  //                  new PaletteEffect(new Palette(CRGB.Rainbow))
+  //          ),
 
             
             // Busy Stuff
@@ -922,13 +922,13 @@ namespace NightDriver
             new ScheduledEffect(ScheduledEffect.AllDays,  4,  5, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.75f), 2)),
            
                 // All Day 
-
+*/
             new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.ColorFadeMiniLites),
             new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.BasicColorTwinkleStarEffect),
             new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.QuietBlueStars),
             new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.QuietColorStars),
             // new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, EffectsDatabase.SparseChristmasLights),
-*/            
+
 
         };
 
