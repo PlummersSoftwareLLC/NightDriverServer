@@ -83,7 +83,7 @@ namespace NightDriver
 
         public SocketResponse Response;
 
-        public const int BatchSize = 5;
+        public const int BatchSize = 20;
         public const double BatchTimeout = 1.0;
 
         private ConcurrentQueue<byte[]> DataQueue = new ConcurrentQueue<byte[]>();
@@ -97,7 +97,7 @@ namespace NightDriver
                 return DataQueue.Count;
             }
         }
-        public const int MaxQueueDepth = 20;
+        public const int MaxQueueDepth = 25;
         
         public uint Offset
         {
@@ -138,6 +138,7 @@ namespace NightDriver
             RedGreenSwap = swapRedGreen;
 
             _Worker = new Thread(WorkerConnectAndSendLoop);
+            _Worker.Name = hostName + " Connect and Send Loop";
             _Worker.IsBackground = true;
             _Worker.Priority = ThreadPriority.BelowNormal;
             _Worker.Start();
@@ -280,7 +281,7 @@ namespace NightDriver
 
             if (DataQueue.Count > MaxQueueDepth)
             {
-                // ConsoleApp.Stats.WriteLine("Queue full so dicarding frame for " + HostName);
+                ConsoleApp.Stats.WriteLine("Queue full so dicarding frame for " + HostName);
                 return false;
             }
 
@@ -292,6 +293,16 @@ namespace NightDriver
 
             // Optionally compress the data, but when we do, if the compressed is larger, we send the original
 
+            if (RedGreenSwap)
+            {
+                foreach(var led in MainLEDs)
+                {
+                    var temp = led.r;
+                    led.r = led.g;
+                    led.g = temp;
+                }
+            }
+            
             byte[] msgraw = GetDataFrame(MainLEDs, timeStart);
             byte[] msg = CompressData ? CompressFrame(msgraw) : msgraw;
             if (msg.Length >= msgraw.Length)
@@ -308,6 +319,9 @@ namespace NightDriver
         {
             get
             {
+                if (Location is null)
+                    return false;
+                    
                 if (DataQueue.Count() > Location.FramesPerSecond)                   // If a full second has accumulated
                     return true;
 
@@ -437,7 +451,7 @@ namespace NightDriver
         public ControllerSocket(string hostname)
         {
             HostName = hostname;
-            //ConsoleApp.Stats.WriteLine("Constructor for " + hostname);
+            //ConsoleApp.Stats.WriteLine("Fetching hostnamae for " + hostname);
             _remoteEP = null;
             Dns.BeginGetHostAddresses(HostName, OnDnsGetHostAddressesComplete, this);
 
@@ -445,13 +459,17 @@ namespace NightDriver
 
         private void OnDnsGetHostAddressesComplete(IAsyncResult result)
         {
-            var This = (ControllerSocket)result.AsyncState;
- 
             try
             {
-                This._ipAddress = Dns.EndGetHostAddresses(result)[0];
-                This._remoteEP = new IPEndPoint(_ipAddress, 49152);
-                //ConsoleApp.Stats.WriteLine("Got IP of " + _remoteEP.Address.ToString() + " for  " + This.HostName);
+                if (result.IsCompleted)
+                {
+                    var This = (ControllerSocket)result.AsyncState;
+                    This._ipAddress = Dns.EndGetHostAddresses(result)[0];
+                    This._remoteEP = new IPEndPoint(_ipAddress, 49152);
+                    ConsoleApp.Stats.WriteLine("Got IP of " + _remoteEP.Address.ToString() + " for  " + This.HostName);
+                }
+                else
+                    IsDead = true;
             }
             catch (Exception)
             {
@@ -503,7 +521,6 @@ namespace NightDriver
         //
         // The response structure sent back to us when we deliver a frame of data to the NightDriverStrip
 
-
         unsafe public uint SendData(byte[] data, ref SocketResponse response)
         {
             uint result = (uint)_socket.Send(data);
@@ -519,29 +536,34 @@ namespace NightDriver
                 BytesSentSinceFrame += result;
             }
 
-            if (result == data.Length)
+            response.Reset();
+
+            if (result != data.Length)
+                return result;
+
+            DateTime startWaiting = DateTime.UtcNow;
+            // Receive the response back from the socket we just sent to
+            int cbToRead = sizeof(SocketResponse);
+            byte[] buffer = new byte[cbToRead];
+
+            // Wait until there's enough data to process or we've waited 5 seconds with no result
+            
+//            while (DateTime.UtcNow - startWaiting > TimeSpan.FromSeconds(5) && _socket.Available < cbToRead)
+//                Thread.Sleep(100);
+
+            while (_socket.Available >= cbToRead)
             {
-                response.Reset();
-                // Receive the response back from the socket we just sent to
-                int cbToRead = sizeof(SocketResponse);
-                byte[] buffer = new byte[cbToRead];
-                while (_socket.Available >= cbToRead)
+                var readBytes = _socket.Receive(buffer, cbToRead, SocketFlags.None);
+                if (readBytes >= sizeof(SocketResponse) && buffer[0] >= sizeof(SocketResponse))
                 {
-                    var readBytes = _socket.Receive(buffer, cbToRead, SocketFlags.None);
-
-                    if (readBytes >= sizeof(SocketResponse) && buffer[0] >= sizeof(SocketResponse))
-                    {
-                        GCHandle pinnedArray = GCHandle.Alloc(buffer, GCHandleType.Pinned);
-                        IntPtr pointer = pinnedArray.AddrOfPinnedObject();
-                        response = Marshal.PtrToStructure<SocketResponse>(pointer);
-                        pinnedArray.Free();
-                    }
-                    FirmwareVersion = "v" + response.flashVersion;
+                    GCHandle pinnedArray = GCHandle.Alloc(buffer, GCHandleType.Pinned);
+                    IntPtr pointer = pinnedArray.AddrOfPinnedObject();
+                    response = Marshal.PtrToStructure<SocketResponse>(pointer);
+                    pinnedArray.Free();
                 }
+                FirmwareVersion = "v" + response.flashVersion;
             }
-
             return result;
         }
     }
 }
-

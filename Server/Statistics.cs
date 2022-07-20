@@ -140,10 +140,11 @@ namespace NightDriver
                 printf_xy(x, y + 5 + topMargin, allControllers[slot - 1].ReadyForData ? "Ready    " : "Not Ready");
                 Console.ForegroundColor = ConsoleColor.Gray;
                 printf_xy(x, y + 6 + topMargin, Spaces.Substring(0, ColumnWidth));
-                printf_xy(x, y + 6 + topMargin, allControllers[slot - 1].BytesPerSecond.ToString());
+                var bps = allControllers[slot - 1].ReadyForData ? allControllers[slot - 1].BytesPerSecond.ToString() : "----";
+                printf_xy(x, y + 6 + topMargin, bps);
                 totalBytes += allControllers[slot - 1].BytesPerSecond;
 
-                var clock = allControllers[slot - 1].Response.currentClock > 100000 ? (allControllers[slot - 1].Response.currentClock - epoch).ToString("F2") : "UNSET";
+                var clock = allControllers[slot - 1].Response.currentClock > 8 ? (allControllers[slot - 1].Response.currentClock - epoch).ToString("F2") : "UNSET";
                 printf_xy(x, y + 7 + topMargin, Spaces.Substring(0, ColumnWidth));
                 printf_xy(x, y + 7 + topMargin, clock);
                 //printf_xy(x, y + 8 + topMargin, allControllers[slot - 1].Response.bufferPos.ToString()+"/"+ allControllers[slot - 1].Response.bufferSize.ToString() + "  ");

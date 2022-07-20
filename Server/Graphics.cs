@@ -830,6 +830,7 @@ namespace NightDriver
         uint DotCount { get; }
         uint Width { get;  }
         uint Height { get;  }
+        double PixelsPerMeter { get; }
     };
 
 
@@ -845,6 +846,11 @@ namespace NightDriver
         public virtual uint DotCount
         {
             get { return Width * Height ;}
+        }
+
+        public virtual double PixelsPerMeter
+        {
+            get { return 144.0; }
         }
 
         protected int16_t abs(int v)
@@ -1106,6 +1112,5 @@ namespace NightDriver
         {
             get;
         }
-
     }
 }
