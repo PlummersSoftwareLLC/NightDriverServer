@@ -308,7 +308,7 @@ namespace NightDriver
         {
             get
             {
-                if (DataQueue.Count() > Location.FramesPerSecond)                   // If a full second has accumulated
+                if (Location != null && DataQueue.Count() > Location.FramesPerSecond)                   // If a full second has accumulated
                     return true;
 
                 if (DataQueue.Any())
