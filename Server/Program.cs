@@ -56,9 +56,9 @@ namespace NightDriver
         //
         // Application main loop - starts worker threads
 
-        internal static Location [] g_AllSites = 
+        internal static Location [] g_AllSites =  
         { 
-          new Cabana()            { FramesPerSecond = 14 },  // Should be max of 22 given the 8*144
+          new Cabana()            { FramesPerSecond = 20 },  // Should be max of 22 given the 8*144
           // new Bench()             { FramesPerSecond = 24 },  // Runs flame effect, so looks better at 30   
           new TV()                { FramesPerSecond = 1  },  // Runs flame effect, so looks better at 30   
           new Tree()              { FramesPerSecond = 24  },  // Runs CharlieBrownTree, looks better at 30
