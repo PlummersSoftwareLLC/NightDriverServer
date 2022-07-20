@@ -13,11 +13,11 @@ public class PaletteEffect : LEDEffect
     protected DateTime     _lastDraw = DateTime.UtcNow;
 
     public Palette         _Palette             = new Palette(CRGB.Rainbow);
-    public double          _LEDColorPerSecond   = 1.0;
-    public double          _LEDScrollSpeed      = 0.0;
+    public double          _LEDColorPerSecond   = -50.0;
+    public double          _LEDScrollSpeed      = 50.0;
     public double          _Density             = 1.0;
-    public double          _EveryNthDot         = 5.0f;
-    public uint            _DotSize             = 2;
+    public double          _EveryNthDot         = 25.0f;
+    public uint            _DotSize             = 5;
     public bool            _RampedColor         = false;
     public double          _Brightness = 1.0;
     public bool            _Mirrored            = false;
@@ -42,7 +42,7 @@ public class PaletteEffect : LEDEffect
         _iPixel %= graphics.DotCount;
 
         double cColorsToScroll = secondsElapsed * _LEDColorPerSecond;
-        _iColor += cColorsToScroll / _Palette.OriginalSize;
+        _iColor += cColorsToScroll / graphics.PixelsPerMeter;
         _iColor -= (long)_iColor;
 
         double iColor = _iColor;
@@ -66,9 +66,8 @@ public class PaletteEffect : LEDEffect
                 count++;
 
             }
-            iColor += count * _Density / _Palette.OriginalSize;
-
-        }
+            iColor +=  count * (_Density / graphics.PixelsPerMeter) * _EveryNthDot;
+        }   
     }
     
 }

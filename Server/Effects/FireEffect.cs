@@ -7,7 +7,7 @@ public class FireEffect : LEDEffect
     public bool  _Reversed;                  // Only applicable when not mirrored, of course, flips it to other side
     public double _Cooling = 100f;            // Amount that each pixel fades through temp each frame
     public int   _Sparks = 2;                // Number of white-hot ignition sparks chances per frame
-    public int   _Drift = 3;                 // Number of drift passes per frame
+    public int   _Drift = 1;                 // Number of drift passes per frame
     public int   _SparkHeight = 12;          // Height of region in which sparks can be created
     public bool  _Afterburners = false;      // A visually intense, white-hot flame (vs. nice campfire)
     public uint  _Size = 0;                  // How big the drawing area is; will be repeated if strip is bigger
@@ -15,11 +15,15 @@ public class FireEffect : LEDEffect
     double[]     _Temperatures;              // Internal table of cell temperatures
     public Palette _Palette;
 
+    public uint   _CellsPerLED = 1;
+
     public Random _rand = new Random();
 
-    public FireEffect(uint cSize, bool bMirrored, Palette palette = null)
+    public FireEffect(uint cSize, bool bMirrored, uint cellsPerLED = 1, Palette palette = null)
     {
-        _Size     = cSize;
+        _CellsPerLED = cellsPerLED;
+
+        _Size     = cSize * _CellsPerLED;
         _Mirrored = bMirrored;
         _Palette  = palette;
     }
@@ -93,20 +97,35 @@ public class FireEffect : LEDEffect
 
         if (_Mirrored)
         {
-            // Step 4.  Convert heat to LED colors
-            for (uint j = 0; j < (_Temperatures.Length) / 2; j++)
+            uint len = _Size / _CellsPerLED;
+
+            for (uint j = 0; j < len / 2; j+=1)
             {
-                graphics.DrawPixel((uint)_Temperatures.Length - 1 - j, 0, ConvertHeatToColor(_Temperatures[j]));
-                graphics.DrawPixel( j, 0, ConvertHeatToColor(_Temperatures[j]));
+                if (_Reversed)
+                {
+                    graphics.DrawPixel(j, 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+                    graphics.DrawPixel((uint)(len - 1 - j), 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+
+                }
+                else
+                {
+                    graphics.DrawPixel(((uint)(len - 1 - j)), 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+                    graphics.DrawPixel(j, 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+                }
             }
         }
         else
         {
-            for (uint j = 0; j < _Temperatures.Length; j++)
+            for (uint j = 0; j < _Temperatures.Length; j+=_CellsPerLED)
+            {
+                uint len = _Size / _CellsPerLED;
+                uint i = j / _CellsPerLED;
+
                 if (_Reversed)
-                    graphics.DrawPixel(j, 0, ConvertHeatToColor(_Temperatures[j]));
+                    graphics.DrawPixel(i, 0, ConvertHeatToColor(_Temperatures[j]));
                 else
-                    graphics.DrawPixel((uint)(_Temperatures.Length - 1 - j), 0, ConvertHeatToColor(_Temperatures[j]));
+                    graphics.DrawPixel((uint)(len - 1 - i), 0, ConvertHeatToColor(_Temperatures[j]));
+            }
         }
 
         graphics.Blur(1);
