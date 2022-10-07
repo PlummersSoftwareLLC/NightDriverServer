@@ -1145,7 +1145,7 @@ namespace NightDriver
             
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow)
             {
-                _Density = 1 * PIXELS_PER_METER144,
+                _Density = 1.0,
                 _EveryNthDot = 10,
                 _DotSize = 2,
                 _LEDColorPerSecond = 0,
@@ -1263,7 +1263,7 @@ namespace NightDriver
         {
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new RainbowEffect(0, 20)),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new RainbowEffect(1, 100)),
-            //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new FireEffect(4 * 144, true) { _Cooling = 350 } )
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new FireEffect(4 * 144, true) { _Cooling = 300 } )
             /*
             new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(new Palette( CRGB.Reds, CRGB.Reds.Length))
             {
@@ -1275,7 +1275,7 @@ namespace NightDriver
                 _Blend = true
             })
             */
-           new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Red, 2))
+           //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Red, 2))
     };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
@@ -1308,8 +1308,8 @@ namespace NightDriver
         {
 
             new LightStrip("192.168.8.12", "CUPBOARD1", compressData, CUPBOARD_1_LENGTH, 1, CUPBOARD_1_START, false),
-            new LightStrip("192.168.8.13", "CUPBOARD2", compressData, CUPBOARD_2_LENGTH, 1, CUPBOARD_2_START, false),
-            new LightStrip("192.168.8.175", "CUPBOARD3", compressData, CUPBOARD_3_LENGTH, 1, CUPBOARD_3_START, false),  // WHOOPS
+            new LightStrip("192.168.8.29", "CUPBOARD2", compressData, CUPBOARD_2_LENGTH, 1, CUPBOARD_2_START, false),
+            new LightStrip("192.168.8.30", "CUPBOARD3", compressData, CUPBOARD_3_LENGTH, 1, CUPBOARD_3_START, false),  // WHOOPS
             new LightStrip("192.168.8.15", "CUPBOARD4", compressData, CUPBOARD_4_LENGTH, 1, CUPBOARD_4_START, false),
         };
 
@@ -1318,7 +1318,8 @@ namespace NightDriver
             //new ScheduledEffect(ScheduledEffect.AllDays,  5, 21, new SimpleColorFillEffect(CRGB.Blue)),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.Orange, 1))
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(new CRGB(64, 255, 128), 1))
-            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow) { _EveryNthDot = 1, _DotSize = 1, _Density = 0.075/32 * PIXELS_PER_METER144, _LEDColorPerSecond = 0.5 }),
+            //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow) { _EveryNthDot = 1, _DotSize = 1, _Density = 0.075/32 * PIXELS_PER_METER144, _LEDColorPerSecond = 0.5 }),
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow) { _EveryNthDot = 1, _DotSize = 1, _Density = 0.025/32 * PIXELS_PER_METER144, _LEDColorPerSecond = 3 }),
         };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
@@ -1488,13 +1489,13 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {           // 192.168.1.18
-            new LightStrip("192.168.8.16", "WINDOWEAST", compressData, WINDOW_2_LENGTH, 1, WINDOW_2_START, false),
+            new LightStrip("192.168.8.22", "WINDOWEAST", compressData, WINDOW_2_LENGTH, 1, WINDOW_2_START, false),
         };
         private static readonly ScheduledEffect[] _LEDEffects =
         {
             // new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new SimpleColorFillEffect(CRGB.Blue, 3))
 
-            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new FireEffect(WINDOW_2_LENGTH, true)),
+            //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new FireEffect(WINDOW_2_LENGTH, true)),
 
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.Football_Effect_Seattle),
             //new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, EffectsDatabase.ChristmasLights),
@@ -1504,7 +1505,7 @@ namespace NightDriver
             //    {
             //        _Density = 0.0025, _LEDScrollSpeed = 5, _LEDColorPerSecond = 5, _DotSize = 1, _EveryNthDot = 1, _Brightness = 0.5
             //    })
-            //new ScheduledEffect(ScheduledEffect.AllDays, 17, 21, new FireEffect(WINDOW_2_LENGTH, true)),
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 24, new PaletteEffect(Palette.Rainbow) { _EveryNthDot = 1, _DotSize = 1, _Density = 0.25/32 * PIXELS_PER_METER144, _LEDColorPerSecond = 3, _Brightness = 0.25 }),
         };
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
