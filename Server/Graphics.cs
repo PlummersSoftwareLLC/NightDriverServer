@@ -43,7 +43,7 @@ using int16_t = System.Int16; // Nice C# feature allowing to use same Arduino/C 
 
 namespace NightDriver
 {
-    // Utilitiesb
+    // Utilities
     // 
     // Helpers and extension methods of general use throughout
 
@@ -79,6 +79,11 @@ namespace NightDriver
         public static double RandomDouble()
         {
             return _random.NextDouble();
+        }
+
+        public static double RandomDouble(double low, double high)
+        {
+            return _random.NextDouble() * (high - low) + low;
         }
 
         public static double UnixTime()

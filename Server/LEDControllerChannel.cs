@@ -83,7 +83,7 @@ namespace NightDriver
 
         public SocketResponse Response;
 
-        public const int BatchSize = 5;
+        public const int BatchSize = 1;
         public const double BatchTimeout = 1.0;
 
         private ConcurrentQueue<byte[]> DataQueue = new ConcurrentQueue<byte[]>();
