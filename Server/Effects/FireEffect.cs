@@ -87,13 +87,11 @@ public class FireEffect : LEDEffect
             }
         }
 
-        /*
-                // Hack for weird TV layout 
-                for (int j = _Temperatures.Length; j < graphics.DotCount; j++)
-                {
-                    graphics.DrawPixel((uint) j, 0, ConvertHeatToColor(_Temperatures[j-(uint) _Temperatures.Length]));
-                }
-        */
+        // Hack for weird TV layout 
+        for (int j = _Temperatures.Length; j < graphics.DotCount; j++)
+        {
+            graphics.DrawPixel((uint) j, 0, ConvertHeatToColor(_Temperatures[j-(uint) _Temperatures.Length]));
+        }
 
         if (_Mirrored)
         {

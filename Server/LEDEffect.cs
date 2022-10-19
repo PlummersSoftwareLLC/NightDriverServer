@@ -19,7 +19,7 @@ public class LEDEffect
         // BUGBUG class and this methoi would be abstract except for serialization requiremets
         throw new ApplicationException("Render Base Class called - This is abstract");
     }
-
+    
     public void DrawFrame(ILEDGraphics graphics)
     {
         //lock(graphics)
