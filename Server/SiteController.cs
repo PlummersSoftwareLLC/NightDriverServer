@@ -1004,33 +1004,31 @@ namespace NightDriver
     {
         const bool compressData = true;
         const int BENCH_START   = 0;
-        const int BENCH_LENGTH = 8*144;
+        const int BENCH_LENGTH = 1*144;
 
         private CRGB[] _LEDs = InitializePixels<CRGB>(BENCH_LENGTH);
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.22", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) {  }  // 216
+            new LightStrip("192.168.8.211", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 360 }  // 216
             //new LightStrip("192.168.8.163", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) {  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true) { _Reversed = true} ),
-
-
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, 
-                new FireworksEffect() { NewParticleProbability = 3, MaxSpeed = 72 }),
-
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, 
-                new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue })) 
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
+                new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
                     { _LEDColorPerSecond = 1,
-                      _LEDScrollSpeed = 5,
-                      _EveryNthDot = 5, 
-                      _DotSize = 1,  
-                      _Mirrored = true, 
+                      _LEDScrollSpeed = 20,
+                      _EveryNthDot = 5,
+                      _DotSize = 1,
+                      _Mirrored = true,
                       _Density = 72 * PIXELS_PER_METER144}),
 
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
+                new FireworksEffect() { NewParticleProbability = 3, MaxSpeed = 72 }),
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true, 1) { _Reversed = true, _Cooling = 4000} ),
 
             // Walking pixel groups of 4, all same rotating color
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, 
