@@ -3,16 +3,17 @@ using NightDriver;
 
 public class FireEffect : LEDEffect
 {
-    public bool  _Mirrored;                  // Should the flame be "mirrored" - drawn on both ends
-    public bool  _Reversed;                  // Only applicable when not mirrored, of course, flips it to other side
-    public double _Cooling = 100f;            // Amount that each pixel fades through temp each frame
-    public int   _Sparks = 2;                // Number of white-hot ignition sparks chances per frame
-    public int   _Drift = 1;                 // Number of drift passes per frame
-    public int   _SparkHeight = 12;          // Height of region in which sparks can be created
-    public bool  _Afterburners = false;      // A visually intense, white-hot flame (vs. nice campfire)
-    public uint  _Size = 0;                  // How big the drawing area is; will be repeated if strip is bigger
-    public double _SparkProbability = 0.5;   // Chance of a new spark
-    double[]     _Temperatures;              // Internal table of cell temperatures
+    public bool   _Mirrored;                  // Should the flame be "mirrored" - drawn on both ends
+    public bool   _Reversed;                  // Only applicable when not mirrored, of course, flips it to other side
+    public double _Cooling = 1000f;           // Amount that each pixel fades through temp each frame
+    public int    _Sparks = 1;                // Number of white-hot ignition sparks chances per frame
+    public int    _Drift = 1;                 // Number of drift passes per frame
+    public int    _SparkHeight = 12;          // Height of region in which sparks can be created
+    public bool   _Afterburners = false;      // A visually intense, white-hot flame (vs. nice campfire)
+    public uint   _Size = 0;                  // How big the drawing area is; will be repeated if strip is bigger
+    public double _SparkProbability = 0.5;    // Chance of a new spark
+    double[]      _Temperatures;              // Internal table of cell temperatures
+
     public Palette _Palette;
 
     public uint   _CellsPerLED = 1;
