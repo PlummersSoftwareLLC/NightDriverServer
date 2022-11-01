@@ -83,7 +83,7 @@ namespace NightDriver
 
         public SocketResponse Response;
 
-        public const int BatchSize = 1;
+        public int BatchSize = 1;
         public const double BatchTimeout = 1.00;
 
         private ConcurrentQueue<byte[]> DataQueue = new ConcurrentQueue<byte[]>();
@@ -125,7 +125,8 @@ namespace NightDriver
                                        bool compressData = true,
                                        byte channel = 0,
                                        byte watts = 0,
-                                       bool swapRedGreen = false)
+                                       bool swapRedGreen = false,
+                                       int  batchSize = 1)
         {
             HostName = hostName;
             FriendlyName = friendlyName;
@@ -136,6 +137,7 @@ namespace NightDriver
             Watts = watts;
             CompressData = compressData;
             RedGreenSwap = swapRedGreen;
+            BatchSize = batchSize;
 
             _Worker = new Thread(WorkerConnectAndSendLoop);
             _Worker.Name = hostName + " Connect and Send Loop";
