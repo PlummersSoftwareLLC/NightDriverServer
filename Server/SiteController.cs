@@ -877,10 +877,10 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.4", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false)  { FramesPerBuffer = 500, BatchSize = 20 },      
-            new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)   { FramesPerBuffer = 500, BatchSize = 20 },      
-            new LightStrip("192.168.8.6", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false)  { FramesPerBuffer = 500, BatchSize = 20 },      
-            new LightStrip("192.168.8.31", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) { FramesPerBuffer = 500, BatchSize = 20 },      
+            new LightStrip("192.168.8.4", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)   { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.6", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.31", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) { FramesPerBuffer = 500, BatchSize = 10 },      
         };
 
         public ScheduledEffect[] _GameDayLEDEffects =
@@ -1165,7 +1165,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.54", "DEMO", compressData, DEMO_LENGTH, 1, DEMO_START, false) { FramesPerBuffer = 500, BatchSize = 20  }  // 216
+            new LightStrip("192.168.1.54", "DEMO", compressData, DEMO_LENGTH, 1, DEMO_START, false) { FramesPerBuffer = 500, BatchSize = 10  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1204,7 +1204,7 @@ namespace NightDriver
         private CRGB[] _LEDs = InitializePixels<CRGB>(TREE_LENGTH);
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.33", "TREE", compressData, TREE_LENGTH, 1, TREE_START, false, 0, false) { FramesPerBuffer = 500, BatchSize = 20  },
+            new LightStrip("192.168.8.33", "TREE", compressData, TREE_LENGTH, 1, TREE_START, false, 0, false) { FramesPerBuffer = 500, BatchSize = 10  },
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1356,7 +1356,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.26", "TV",        compressData, TV_LENGTH,         1, TV_START, false) { FramesPerBuffer = 500, BatchSize = 20  }
+            new LightStrip("192.168.8.26", "TV",        compressData, TV_LENGTH,         1, TV_START, false) { FramesPerBuffer = 500, BatchSize = 10  }
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1407,10 +1407,10 @@ namespace NightDriver
         private LightStrip[] _StripControllers =
         {
 
-            new LightStrip("192.168.8.12", "CUPBOARD1", compressData, CUPBOARD_1_LENGTH, 1, CUPBOARD_1_START, false) { FramesPerBuffer = 500, BatchSize = 20 },
-            new LightStrip("192.168.8.29", "CUPBOARD2", compressData, CUPBOARD_2_LENGTH, 1, CUPBOARD_2_START, false) { FramesPerBuffer = 500, BatchSize = 20 },
-            new LightStrip("192.168.8.30", "CUPBOARD3", compressData, CUPBOARD_3_LENGTH, 1, CUPBOARD_3_START, false) { FramesPerBuffer = 500, BatchSize = 20 },  // WHOOPS
-            new LightStrip("192.168.8.15", "CUPBOARD4", compressData, CUPBOARD_4_LENGTH, 1, CUPBOARD_4_START, false) { FramesPerBuffer = 500, BatchSize = 20 },
+            new LightStrip("192.168.8.12", "CUPBOARD1", compressData, CUPBOARD_1_LENGTH, 1, CUPBOARD_1_START, false) { FramesPerBuffer = 500, BatchSize = 10 },
+            new LightStrip("192.168.8.29", "CUPBOARD2", compressData, CUPBOARD_2_LENGTH, 1, CUPBOARD_2_START, false) { FramesPerBuffer = 500, BatchSize = 10 },
+            new LightStrip("192.168.8.30", "CUPBOARD3", compressData, CUPBOARD_3_LENGTH, 1, CUPBOARD_3_START, false) { FramesPerBuffer = 500, BatchSize = 10 },  // WHOOPS
+            new LightStrip("192.168.8.15", "CUPBOARD4", compressData, CUPBOARD_4_LENGTH, 1, CUPBOARD_4_START, false) { FramesPerBuffer = 500, BatchSize = 10 },
         };
 
         public ScheduledEffect[] _LEDEffects =
