@@ -63,6 +63,7 @@ public class Meteor
     }
 }
 
+// A meteor that zooms through the strip 
 public class MeteorEffect : LEDEffect
 {
     protected ILEDGraphics _graphics;
@@ -75,7 +76,13 @@ public class MeteorEffect : LEDEffect
 
     protected bool         _bFirstDraw = true;
 
-    public MeteorEffect(int dotCount, bool bBounce = true, int meteorCount = 4, int meteorSize = 4, double trailDecay = 1.0, double minSpeed = 0.5, double maxSpeed = 0.5)
+    public MeteorEffect(int    dotCount, 
+                        bool   bBounce = true, 
+                        int    meteorCount = 4, 
+                        int    meteorSize = 4, 
+                        double trailDecay = 1.0, 
+                        double minSpeed = 0.5, 
+                        double maxSpeed = 0.5)
     {
         meteorCount += 1;
         meteorCount /= 2;           // Force an even number of meteors

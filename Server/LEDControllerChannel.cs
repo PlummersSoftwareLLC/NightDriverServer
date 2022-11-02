@@ -83,8 +83,8 @@ namespace NightDriver
 
         public SocketResponse Response;
 
-        public const int BatchSize = 1;
-        public const double BatchTimeout = 1.0;
+        public int BatchSize = 1;
+        public const double BatchTimeout = 1.00;
 
         private ConcurrentQueue<byte[]> DataQueue = new ConcurrentQueue<byte[]>();
 
@@ -97,7 +97,7 @@ namespace NightDriver
                 return DataQueue.Count;
             }
         }
-        public const int MaxQueueDepth = 25;
+        public const int MaxQueueDepth = 50;
         
         public uint Offset
         {
@@ -125,7 +125,8 @@ namespace NightDriver
                                        bool compressData = true,
                                        byte channel = 0,
                                        byte watts = 0,
-                                       bool swapRedGreen = false)
+                                       bool swapRedGreen = false,
+                                       int  batchSize = 1)
         {
             HostName = hostName;
             FriendlyName = friendlyName;
@@ -136,6 +137,7 @@ namespace NightDriver
             Watts = watts;
             CompressData = compressData;
             RedGreenSwap = swapRedGreen;
+            BatchSize = batchSize;
 
             _Worker = new Thread(WorkerConnectAndSendLoop);
             _Worker.Name = hostName + " Connect and Send Loop";
@@ -535,9 +537,7 @@ namespace NightDriver
             {
                 BytesSentSinceFrame += result;
             }
-
-            response.Reset();
-
+            
             if (result != data.Length)
                 return result;
 
@@ -548,8 +548,8 @@ namespace NightDriver
 
             // Wait until there's enough data to process or we've waited 5 seconds with no result
             
-//            while (DateTime.UtcNow - startWaiting > TimeSpan.FromSeconds(5) && _socket.Available < cbToRead)
-//                Thread.Sleep(100);
+            while (DateTime.UtcNow - startWaiting > TimeSpan.FromSeconds(5) && _socket.Available < cbToRead)
+                Thread.Sleep(100);
 
             while (_socket.Available >= cbToRead)
             {

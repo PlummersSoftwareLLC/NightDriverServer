@@ -58,8 +58,8 @@ namespace NightDriver
 
         internal static Location [] g_AllSites =  
         { 
-          new Cabana()            { FramesPerSecond = 30 },  // Should be max of 22 given the 8*144
-          //new Bench()             { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
+          new Cabana()            { FramesPerSecond = 24 },  // Should be max of 22 given the 8*144
+          new Bench()             { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
           new TV()                { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
           new Tree()              { FramesPerSecond = 30  },  // Runs CharlieBrownTree, looks better at 30
           new ShopCupboards()     { FramesPerSecond = 20 },  

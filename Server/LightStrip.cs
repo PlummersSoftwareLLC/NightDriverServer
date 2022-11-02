@@ -6,9 +6,9 @@ namespace NightDriver
 {
     public class LightStrip : LEDControllerChannel
     {
-        public uint FramesPerBuffer  = 26;              // How many buffer frames the chips have
+        public uint FramesPerBuffer  = 24;                      // How many buffer frames the chips have
         
-        public const double PercentBufferUse = 0.85;            // How much of the buffer we should use up
+        public const double PercentBufferUse = 0.9;            // How much of the buffer we should use up
 
         // The only attribute that a light strip adds is that it can be reversed, as you
         // could hand it from either end
@@ -36,8 +36,8 @@ namespace NightDriver
             }
         }
 
-        public LightStrip(string hostName, string friendlyName, bool compressData, uint width, uint height = 1, uint offset = 0, bool reversed = false, byte channel = 0, bool swapRedGreen = false)
-        : base(hostName, friendlyName, width, height, offset, compressData, channel, 0, swapRedGreen)
+        public LightStrip(string hostName, string friendlyName, bool compressData, uint width, uint height = 1, uint offset = 0, bool reversed = false, byte channel = 0, bool swapRedGreen = false, int batchSize = 1)
+        : base(hostName, friendlyName, width, height, offset, compressData, channel, 0, swapRedGreen, batchSize)
         {
             Reversed = reversed;
         }
