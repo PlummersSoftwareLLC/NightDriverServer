@@ -548,8 +548,8 @@ namespace NightDriver
 
             // Wait until there's enough data to process or we've waited 5 seconds with no result
             
-            while (DateTime.UtcNow - startWaiting > TimeSpan.FromSeconds(5) && _socket.Available < cbToRead)
-                Thread.Sleep(100);
+            //while (DateTime.UtcNow - startWaiting > TimeSpan.FromSeconds(5) && _socket.Available < cbToRead)
+            //    Thread.Sleep(100);
 
             while (_socket.Available >= cbToRead)
             {

@@ -6,9 +6,9 @@ namespace NightDriver
 {
     public class LightStrip : LEDControllerChannel
     {
-        public uint FramesPerBuffer  = 24;                      // How many buffer frames the chips have
+        public uint FramesPerBuffer  = 21;                      // How many buffer frames the chips have
         
-        public const double PercentBufferUse = 0.9;            // How much of the buffer we should use up
+        public const double PercentBufferUse = 0.66;            // How much of the buffer we should use up
 
         // The only attribute that a light strip adds is that it can be reversed, as you
         // could hand it from either end
