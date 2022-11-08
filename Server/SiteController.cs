@@ -879,9 +879,9 @@ namespace NightDriver
         private LightStrip[] _StripControllers =
         {
             new LightStrip("192.168.8.36", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
-            new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)   { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)    { FramesPerBuffer = 500, BatchSize = 10 },      
             new LightStrip("192.168.8.37", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
-            new LightStrip("192.168.8.31", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.31", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
         };
 
         public ScheduledEffect[] _GameDayLEDEffects =
