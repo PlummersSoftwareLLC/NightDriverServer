@@ -185,8 +185,9 @@ namespace NightDriver
             {
                 int iEffect = (int)((DateTime.Now - StartTime).TotalSeconds / SecondsPerEffect);
                 iEffect %= effectCount;
-                enabledEffects.ElementAt(iEffect).LEDEffect.DrawFrame(this);
-                CurrentEffectName = enabledEffects.ElementAt(iEffect).LEDEffect.GetType().Name;
+                var effect = enabledEffects.ElementAt(iEffect);
+                effect.LEDEffect.DrawFrame(this);
+                CurrentEffectName = effect.LEDEffect.GetType().Name;
                 if ((DateTime.UtcNow - timeStart2).TotalSeconds > 0.25)
                     ConsoleApp.Stats.WriteLine("MAIN3 DELAY");
             }
@@ -877,9 +878,9 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.4", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.36", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
             new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)   { FramesPerBuffer = 500, BatchSize = 10 },      
-            new LightStrip("192.168.8.6", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.37", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
             new LightStrip("192.168.8.31", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) { FramesPerBuffer = 500, BatchSize = 10 },      
         };
 
@@ -906,15 +907,28 @@ namespace NightDriver
             }),
             */
 
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
-                new MeteorEffect(CABANA_LENGTH, false, CABANA_LENGTH / 144, 5, 0.88, 3, 3)),
+
 
             // Busy Stuff
 
             // new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDFatabase.ColorTunnel ),
-            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.RainbowStrip ),
-            
+
             new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.FastRainbowMarquee ),
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22,
+                new MeteorEffect(CABANA_LENGTH, false, CABANA_LENGTH / 144, 5, 0.88, 3, 3)),
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22,
+                            new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
+                                { _LEDColorPerSecond = 20,
+                                _LEDScrollSpeed = 8,
+                                _EveryNthDot = 12,
+                                _DotSize = 1,
+                                _Mirrored = false,
+                                _Brightness = 1.0,
+                                _Density = 8}),
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.RainbowStrip ),
             new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.RainbowMiniLites ),
             new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.ColorCycleTube ),
             new ScheduledEffect(ScheduledEffect.AllDays,  9, 22, EffectsDatabase.SlowNeonRails ),
@@ -1014,7 +1028,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.36", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 21, BatchSize = 1  }  // 216
+            new LightStrip("192.168.8.70", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 500, BatchSize = 50  }  // 216
             //new LightStrip("192.168.8.163", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) {  }  // 216
         }; 
 
@@ -1026,18 +1040,21 @@ namespace NightDriver
 
             // Fireworks - A little too intense for video background
             //
-            // new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
-            //     new FireworksEffect() { NewParticleProbability = 3, MaxSpeed = 12 }),
+
+
+           new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
+                new FireworksEffect() { NewParticleProbability = 3, MaxSpeed = 36 }),
 
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
                 new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
                     { _LEDColorPerSecond = 20,
-                    _LEDScrollSpeed = 3,
-                    _EveryNthDot = 4,
+                    _LEDScrollSpeed = 8,
+                    _EveryNthDot = 12,
                     _DotSize = 1,
                     _Mirrored = false,
                     _Brightness = 1.0,
                     _Density = 8}),
+
 
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new PaletteEffect(Palette.SmoothRainbow)
             {   
@@ -1047,6 +1064,24 @@ namespace NightDriver
                 _LEDColorPerSecond = 50,
                 _LEDScrollSpeed = 0,
             }),
+
+            new ScheduledEffect(ScheduledEffect.AllDays, 0, 25, new StarEffect<PaletteStar>
+            {
+                Blend = false,
+                NewStarProbability = 2.0,
+                StarPreignitonTime = 0.5,
+                StarIgnition = 0.0,
+                StarHoldTime = 0.5,
+                StarFadeTime = 1.0,
+                StarSize = 1,
+                MaxSpeed = 0,
+                ColorSpeed = 0,
+                Palette = new Palette(CRGB.ChristmasLights),
+                RampedColor = false
+            }),
+
+
+
 
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true, 1) { _SparkHeight = 10, _Cooling = 1000, _SparkProbability = 0.25 } ),
 
@@ -1096,8 +1131,6 @@ namespace NightDriver
                 new MeteorEffect(BENCH_LENGTH, true, BENCH_LENGTH / 144, 5, 0.80, 3, 3)),
 
 
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
-                new FireworksEffect() { NewParticleProbability = 3, MaxSpeed = 72 }),
 
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
                 new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
