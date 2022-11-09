@@ -877,9 +877,9 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.4", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.36", "CBWEST1", compressData, CABANA_1_LENGTH, 1, CABANA_1, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
             new LightStrip("192.168.8.5", "CBEAST1", compressData, CABANA_2_LENGTH, 1, CABANA_2, true)   { FramesPerBuffer = 500, BatchSize = 10 },      
-            new LightStrip("192.168.8.6", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
+            new LightStrip("192.168.8.37", "CBEAST2", compressData, CABANA_3_LENGTH, 1, CABANA_3, false)  { FramesPerBuffer = 500, BatchSize = 10 },      
             new LightStrip("192.168.8.31", "CBEAST3", compressData, CABANA_4_LENGTH, 1, CABANA_4, false) { FramesPerBuffer = 500, BatchSize = 10 },      
         };
 
@@ -1014,7 +1014,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.22", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 27, BatchSize = 1  }  // 216
+            new LightStrip("192.168.8.70", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 500, BatchSize = 1  }  // 216
             //new LightStrip("192.168.8.163", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) {  }  // 216
         }; 
 
@@ -1028,6 +1028,28 @@ namespace NightDriver
             //
             // new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
             //     new FireworksEffect() { NewParticleProbability = 3, MaxSpeed = 12 }),
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
+                    new PaletteEffect( new Palette(new CRGB [] { CRGB.Green }))
+                        { _LEDColorPerSecond = 20,
+                        _LEDScrollSpeed = 3,
+                        _EveryNthDot = 4,
+                        _DotSize = 1,
+                        _Mirrored = false,
+                        _Brightness = 1.0,
+                        _Density = 0}),
+
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
+                    new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
+                        { _LEDColorPerSecond = 20,
+                        _LEDScrollSpeed = 0,
+                        _EveryNthDot = BENCH_LENGTH,
+                        _DotSize = BENCH_LENGTH,
+                        _Mirrored = false,
+                        _Brightness = 1.0,
+                        _Density = 0}),
+
 
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new PaletteEffect(Palette.SmoothRainbow)
             {   
@@ -1043,28 +1065,9 @@ namespace NightDriver
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
                 new MeteorEffect(BENCH_LENGTH, false, BENCH_LENGTH / 144, 1, 0.75, 0.5, 0.5)),
 
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
-                    new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
-                        { _LEDColorPerSecond = 20,
-                        _LEDScrollSpeed = 0,
-                        _EveryNthDot = BENCH_LENGTH,
-                        _DotSize = BENCH_LENGTH,
-                        _Mirrored = false,
-                        _Brightness = 1.0,
-                        _Density = 0}),
 
 
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Green, 1)),
-
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
-                    new PaletteEffect( new Palette(new CRGB [] { CRGB.Green }))
-                        { _LEDColorPerSecond = 20,
-                        _LEDScrollSpeed = 3,
-                        _EveryNthDot = 4,
-                        _DotSize = 1,
-                        _Mirrored = false,
-                        _Brightness = 1.0,
-                        _Density = 0}),
 
                 new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
                     new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
