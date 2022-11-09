@@ -66,6 +66,11 @@ public class PaletteEffect : LEDEffect
                 count++;
 
             }
+            // Avoid pixel 0 flicker as it scrolls by copying pixel 1 onto 0
+            
+            if (graphics.DotCount > 1)
+                graphics.DrawPixel(0, graphics.GetPixel(1));
+
             iColor +=  count * (_Density / graphics.PixelsPerMeter) * _EveryNthDot;
         }   
     }
