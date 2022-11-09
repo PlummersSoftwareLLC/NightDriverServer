@@ -287,12 +287,14 @@ namespace NightDriver
                 return false;
             }
 
+            /*
             if (_iPacketCount % 100 == 0 && NeedsClockStream)
             {
                 byte [] msgclock = GetClockFrame(timeStart);
                 DataQueue.Enqueue(msgclock);
             }
-
+            */
+            
             // Optionally compress the data, but when we do, if the compressed is larger, we send the original
 
             if (RedGreenSwap)

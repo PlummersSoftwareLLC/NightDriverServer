@@ -1056,6 +1056,28 @@ namespace NightDriver
                     _Density = 8}),
 
 
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
+                    new PaletteEffect( new Palette(new CRGB [] { CRGB.Green }))
+                        { _LEDColorPerSecond = 20,
+                        _LEDScrollSpeed = 3,
+                        _EveryNthDot = 4,
+                        _DotSize = 1,
+                        _Mirrored = false,
+                        _Brightness = 1.0,
+                        _Density = 0}),
+
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
+                    new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
+                        { _LEDColorPerSecond = 20,
+                        _LEDScrollSpeed = 0,
+                        _EveryNthDot = BENCH_LENGTH,
+                        _DotSize = BENCH_LENGTH,
+                        _Mirrored = false,
+                        _Brightness = 1.0,
+                        _Density = 0}),
+
+
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new PaletteEffect(Palette.SmoothRainbow)
             {   
                 _Density = 2,
@@ -1086,28 +1108,9 @@ namespace NightDriver
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(BENCH_LENGTH, true, 1) { _SparkHeight = 10, _Cooling = 1000, _SparkProbability = 0.25 } ),
 
 
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
-                    new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
-                        { _LEDColorPerSecond = 20,
-                        _LEDScrollSpeed = 0,
-                        _EveryNthDot = BENCH_LENGTH,
-                        _DotSize = BENCH_LENGTH,
-                        _Mirrored = false,
-                        _Brightness = 1.0,
-                        _Density = 0}),
 
 
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Green, 1)),
-
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
-                    new PaletteEffect( new Palette(new CRGB [] { CRGB.Green }))
-                        { _LEDColorPerSecond = 20,
-                        _LEDScrollSpeed = 3,
-                        _EveryNthDot = 4,
-                        _DotSize = 1,
-                        _Mirrored = false,
-                        _Brightness = 1.0,
-                        _Density = 0}),
 
                 new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,
                     new PaletteEffect( new Palette(new CRGB [] { CRGB.Red, CRGB.Green, CRGB.Blue }))
