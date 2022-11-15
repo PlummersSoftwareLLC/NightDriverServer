@@ -26,7 +26,7 @@ public class Palette
     {
         get
         {
-            if (d < 0)
+            while (d < 0)
                 d += 1.0;
 
             d -= ((long)d);                                     // Wrap around to 0-1 scale so that 3.4 -> 0.4, for example

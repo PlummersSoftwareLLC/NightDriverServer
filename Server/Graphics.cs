@@ -487,13 +487,7 @@ namespace NightDriver
         public static CRGB[] ChristmasLights => new CRGB[]
         {
             CRGB.Red,
-            CRGB.Red,
-            CRGB.Red,
             CRGB.Green,
-            CRGB.Green,
-            CRGB.Green,
-            CRGB.Blue,
-            CRGB.Blue,
             CRGB.Blue,
             CRGB.Orange,
             CRGB.Purple,
@@ -571,21 +565,21 @@ namespace NightDriver
 
         public static CRGB[] RainbowStripes => new CRGB[]
         {
-            CRGB.Black,
+            CRGB.Black, 
             CRGB.Red,
-            CRGB.Black,
-            CRGB.Orange,
-            CRGB.Black,
-            CRGB.Yellow,
-            CRGB.Black,
+            CRGB.Black, 
+            CRGB.Orange,   
+            CRGB.Black, 
+            CRGB.Yellow,   
+            CRGB.Black, 
             CRGB.Green,
-            CRGB.Black,
+            CRGB.Black, 
             CRGB.Cyan,
-            CRGB.Black,
+            CRGB.Black, 
             CRGB.Blue,
-            CRGB.Black,
-            CRGB.Purple,
-            CRGB.Black,
+            CRGB.Black, 
+            CRGB.Purple,   
+            CRGB.Black, 
             CRGB.Green
         };
 

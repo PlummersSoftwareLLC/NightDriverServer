@@ -148,7 +148,7 @@ namespace NightDriver
                 printf_xy(x, y + 7 + topMargin, Spaces.Substring(0, ColumnWidth));
                 printf_xy(x, y + 7 + topMargin, clock);
                 //printf_xy(x, y + 8 + topMargin, allControllers[slot - 1].Response.bufferPos.ToString()+"/"+ allControllers[slot - 1].Response.bufferSize.ToString() + "  ");
-                printf_xy(x, y + 8 + topMargin, Bar(allControllers[slot - 1].Response.bufferPos / (double) allControllers[slot - 1].Response.bufferSize, ColumnWidth - 3));
+                printf_xy(x, y + 8 + topMargin, Bar((allControllers[slot - 1].Response.bufferPos+1) / (double) allControllers[slot - 1].Response.bufferSize, ColumnWidth - 3));
                 printf_xy(x, y + 9 + topMargin, allControllers[slot - 1].Response.watts.ToString() + "W " + allControllers[slot - 1].Response.brightness.ToString("F0") + "%");
                 printf_xy(x, y + 10 + topMargin, allControllers[slot - 1].Response.fpsDrawing.ToString());
                 printf_xy(x, y + 11 + topMargin, allControllers[slot - 1].Connects.ToString() + " ");

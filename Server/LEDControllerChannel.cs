@@ -50,21 +50,21 @@ namespace NightDriver
         public UInt32 bufferPos;
         public UInt32 fpsDrawing;
         public UInt32 watts;
-        
+
 
         public void Reset()
         {
-            size         = 0;
-            flashVersion = 0;   
-            currentClock = 0;   
-            oldestPacket = 0;   
-            newestPacket = 0;   
-            brightness   = 0;
-            wifiSignal   = 0;
-            bufferSize   = 0;
-            bufferPos    = 0;
-            fpsDrawing   = 0;
-            watts        = 0;
+            size = 0;
+            flashVersion = 0;
+            currentClock = 0;
+            oldestPacket = 0;
+            newestPacket = 0;
+            brightness = 0;
+            wifiSignal = 0;
+            bufferSize = 0;
+            bufferPos = 0;
+            fpsDrawing = 0;
+            watts = 0;
         }
     };
 
@@ -72,12 +72,12 @@ namespace NightDriver
     {
         public string HostName;
         public string FriendlyName;
-        public bool   CompressData = true;
-        public byte   Channel = 0;
+        public bool CompressData = true;
+        public byte Channel = 0;
         public double Brightness = 1.0f;
-        public uint   Connects = 0;
-        public uint   Watts = 0;
-        public bool   RedGreenSwap = false;
+        public uint Connects = 0;
+        public uint Watts = 0;
+        public bool RedGreenSwap = false;
 
         public Location Location;
 
@@ -97,8 +97,8 @@ namespace NightDriver
                 return DataQueue.Count;
             }
         }
-        public const int MaxQueueDepth = 50;
-        
+        public const int MaxQueueDepth = 99;
+
         public uint Offset
         {
             get;
@@ -126,7 +126,7 @@ namespace NightDriver
                                        byte channel = 0,
                                        byte watts = 0,
                                        bool swapRedGreen = false,
-                                       int  batchSize = 1)
+                                       int batchSize = 1)
         {
             HostName = hostName;
             FriendlyName = friendlyName;
@@ -146,7 +146,7 @@ namespace NightDriver
             _Worker.Start();
         }
 
-        
+
         internal bool HasSocket       // Is there a socket at all yet?
         {
             get
@@ -163,27 +163,14 @@ namespace NightDriver
             get
             {
                 ControllerSocket controllerSocket = ControllerSocketForHost(HostName);
-                if (null == controllerSocket || 
-                    controllerSocket._socket == null || 
+                if (null == controllerSocket ||
+                    controllerSocket._socket == null ||
                     !controllerSocket._socket.Connected ||
-                    DataQueue.Count > MaxQueueDepth)
+                    QueueDepth > MaxQueueDepth)
                     return false;
                 return true;
             }
         }
-
-        internal bool NeedsClockStream
-        {
-            get;
-            set;
-        } = true;
-
-        internal bool Supports64BitClock
-        {
-            get;
-            set;
-        } = true;
-
 
         internal uint MinimumSpareTime => (uint)_HostControllerSockets.Min(controller => controller.Value.BytesPerSecond);
 
@@ -198,7 +185,7 @@ namespace NightDriver
             }
         }
 
-        public uint TotalBytesPerSecond => (uint) _HostControllerSockets.Sum(controller => controller.Value.BytesPerSecond);
+        public uint TotalBytesPerSecond => (uint)_HostControllerSockets.Sum(controller => controller.Value.BytesPerSecond);
 
         public ControllerSocket ControllerSocket
         {
@@ -224,14 +211,15 @@ namespace NightDriver
         {
             throw new ApplicationException("Should never hit base class GetDataFrame");
         }
-        
+
+/*
         protected virtual byte[] GetClockFrame(DateTime timeStart)
         {
             // The timeOffset is how far in the future frames are generated for.  If the chips have a 2 second buffer, you could
             // go up to 2 seconds, but I shoot for the middle of the buffer depth.  
 
-            double   epoch = (DateTime.UtcNow.Ticks - DateTime.UnixEpoch.Ticks) / (double) TimeSpan.TicksPerSecond;
-            ulong  seconds = (ulong)epoch;                                      // Whole part of time number (left of the decimal point)
+            double epoch = (DateTime.UtcNow.Ticks - DateTime.UnixEpoch.Ticks) / (double)TimeSpan.TicksPerSecond;
+            ulong seconds = (ulong)epoch;                                      // Whole part of time number (left of the decimal point)
             ulong uSeconds = (ulong)((epoch - (int)epoch) * 1000000);           // Fractional part of time (right of the decimal point)
 
             return LEDInterop.CombineByteArrays(LEDInterop.WORDToBytes((UInt16)2),             // Command, which is 2 for us
@@ -240,7 +228,7 @@ namespace NightDriver
                                                 LEDInterop.ULONGToBytes((UInt64)uSeconds)      // Timestamp seconds
                                                 );                                             // Color Data
         }
-
+*/
         byte[] CompressFrame(byte[] data)
         {
             const int COMPRESSED_HEADER_TAG = 0x44415645;       // Magic "DAVE" tag for compressed data - replaces size field
@@ -281,39 +269,33 @@ namespace NightDriver
             if (null == controllerSocket)
                 _HostControllerSockets[HostName] = controllerSocket;
 
-            if (DataQueue.Count > MaxQueueDepth)
+            if (QueueDepth > MaxQueueDepth)
             {
                 ConsoleApp.Stats.WriteLine("Queue full so dicarding frame for " + HostName);
                 return false;
             }
 
-            /*
-            if (_iPacketCount % 100 == 0 && NeedsClockStream)
-            {
-                byte [] msgclock = GetClockFrame(timeStart);
-                DataQueue.Enqueue(msgclock);
-            }
-            */
-            
-            // Optionally compress the data, but when we do, if the compressed is larger, we send the original
+            // Swap color bytes for strips that need it 
 
             if (RedGreenSwap)
             {
-                foreach(var led in MainLEDs)
+                foreach (var led in MainLEDs)
                 {
                     var temp = led.r;
                     led.r = led.g;
                     led.g = temp;
                 }
             }
-            
+
+            // Optionally compress the data, but when we do, if the compressed is larger, we send the original
+
             byte[] msgraw = GetDataFrame(MainLEDs, timeStart);
             byte[] msg = CompressData ? CompressFrame(msgraw) : msgraw;
             if (msg.Length >= msgraw.Length)
             {
                 msg = msgraw;
             }
-            
+
             DataQueue.Enqueue(msg);
             _iPacketCount++;
             return true;
@@ -325,7 +307,7 @@ namespace NightDriver
             {
                 if (Location is null)
                     return false;
-                    
+
                 if (DataQueue.Count() > Location.FramesPerSecond)                   // If a full second has accumulated
                     return true;
 
@@ -347,8 +329,8 @@ namespace NightDriver
         void WorkerConnectAndSendLoop()
         {
             // We delay-start a random fraction of a quarter second to stagger the workload so that the WiFi is a little more balanced
-            
-            for (;;)
+
+            for (; ; )
             {
                 ControllerSocket controllerSocket
                     = _HostControllerSockets.GetOrAdd(HostName, (hostname) =>
@@ -359,23 +341,21 @@ namespace NightDriver
                       });
 
 
-                if (DataQueue.Count >= MaxQueueDepth)
+                if (QueueDepth >= MaxQueueDepth)
                 {
                     DataQueue.Clear();
-                    ConsoleApp.Stats.WriteLine("Closing jammed socket: " + HostName);
+                    ConsoleApp.Stats.WriteLine("Discarding data for jammed socket: " + HostName);
                     ControllerSocket oldSocket;
                     _HostControllerSockets.TryRemove(HostName, out oldSocket);
-                    Thread.Sleep(10);
                     continue;
                 }
 
 
                 if (false == controllerSocket.EnsureConnected())
                 {
-                    //ConsoleApp.Stats.WriteLine("Closing disconnected socket: " + HostName);
+                    ConsoleApp.Stats.WriteLine("Closing disconnected socket: " + HostName);
                     ControllerSocket oldSocket;
                     _HostControllerSockets.TryRemove(HostName, out oldSocket);
-                    Thread.Sleep(10);
                     continue;
                 }
 
@@ -404,7 +384,7 @@ namespace NightDriver
                             else
                             {
                                 // Console.WriteLine("Sent " + bytesSent + " to " + HostName);
-                                double  framesPerSecond = (double)((DateTime.UtcNow - _timeLastSend).TotalSeconds);
+                                double framesPerSecond = (double)((DateTime.UtcNow - _timeLastSend).TotalSeconds);
                             }
                         }
                         catch (SocketException ex)
@@ -428,8 +408,8 @@ namespace NightDriver
     [Serializable]
     public class ControllerSocket
     {
-        public  Socket      _socket;
-        private IPAddress  _ipAddress;
+        public Socket _socket;
+        private IPAddress _ipAddress;
         private IPEndPoint _remoteEP;
 
         private DateTime LastDataFrameTime;
@@ -454,11 +434,17 @@ namespace NightDriver
 
         public ControllerSocket(string hostname)
         {
-            HostName = hostname;
-            //ConsoleApp.Stats.WriteLine("Fetching hostnamae for " + hostname);
-            _remoteEP = null;
-            Dns.BeginGetHostAddresses(HostName, OnDnsGetHostAddressesComplete, this);
-
+            var entry = Dns.GetHostByName(hostname);
+            _ipAddress = entry.AddressList[0];
+            _remoteEP = new IPEndPoint(_ipAddress, 49152);
+            return;
+            
+            // I also wrote the async version, but am staying sync above for simplicity right now
+            //
+            // HostName = hostname;
+            // ConsoleApp.Stats.WriteLine("Fetching hostnamae for " + hostname);
+            // _remoteEP = null;
+            // Dns.BeginGetHostAddresses(HostName, OnDnsGetHostAddressesComplete, this);
         }
 
         private void OnDnsGetHostAddressesComplete(IAsyncResult result)
@@ -491,11 +477,11 @@ namespace NightDriver
             if (IsDead == true)
                 return false;
 
-            if (_remoteEP == null)
-                return false;
-
             if (_socket != null && _socket.Connected)
                 return true;
+
+            if (_remoteEP == null)
+                return false;
 
             try
             {
@@ -516,7 +502,7 @@ namespace NightDriver
             }
             catch (SocketException)
             {
-                IsDead = true;  
+                IsDead = true;
                 return false;
             }
         }
@@ -528,6 +514,12 @@ namespace NightDriver
         unsafe public uint SendData(byte[] data, ref SocketResponse response)
         {
             uint result = (uint)_socket.Send(data);
+            if (result != data.Length)
+            {
+                IsDead = true;
+
+                return result;
+            }
 
             TimeSpan timeSinceLastSend = DateTime.UtcNow - LastDataFrameTime;
             if (timeSinceLastSend > TimeSpan.FromSeconds(10.0))
@@ -539,9 +531,6 @@ namespace NightDriver
             {
                 BytesSentSinceFrame += result;
             }
-            
-            if (result != data.Length)
-                return result;
 
             DateTime startWaiting = DateTime.UtcNow;
             // Receive the response back from the socket we just sent to
@@ -549,7 +538,7 @@ namespace NightDriver
             byte[] buffer = new byte[cbToRead];
 
             // Wait until there's enough data to process or we've waited 5 seconds with no result
-            
+
             while (DateTime.UtcNow - startWaiting > TimeSpan.FromSeconds(5) && _socket.Available < cbToRead)
                 Thread.Sleep(100);
 
