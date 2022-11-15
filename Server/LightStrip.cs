@@ -6,7 +6,7 @@ namespace NightDriver
 {
     public class LightStrip : LEDControllerChannel
     {
-        public uint FramesPerBuffer  = 24;                      // How many buffer frames the chips have
+        public uint FramesPerBuffer  = 21;                      // How many buffer frames the chips have
         
         public const double PercentBufferUse = 0.70;            // How much of the buffer we should use up
 

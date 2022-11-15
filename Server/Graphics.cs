@@ -821,7 +821,7 @@ namespace NightDriver
         void Blur(uint passes = 1, uint start = 0, uint length = 0);
         void FillRainbow(double startHue = 0.0, double deltaHue = 5.0);
 
-        CRGB GetPixel(uint x, uint y);
+        CRGB GetPixel(uint x, uint y = 0);
         void DrawPixel(uint x, uint y, CRGB color);
         void DrawPixels(double fPos, double count, CRGB color);
         void DrawPixel(uint x, CRGB color);
