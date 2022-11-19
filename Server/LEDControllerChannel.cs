@@ -353,7 +353,7 @@ namespace NightDriver
 
                 if (false == controllerSocket.EnsureConnected())
                 {
-                    ConsoleApp.Stats.WriteLine("Closing disconnected socket: " + HostName);
+                    //ConsoleApp.Stats.WriteLine("Closing disconnected socket: " + HostName);
                     ControllerSocket oldSocket;
                     _HostControllerSockets.TryRemove(HostName, out oldSocket);
                     continue;

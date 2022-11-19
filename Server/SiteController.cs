@@ -1055,7 +1055,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.70", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 500, BatchSize = 50  }  // 216
+            new LightStrip("192.168.8.38", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 21, BatchSize = 1  }  // 216
             //new LightStrip("192.168.8.163", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) {  }  // 216
         }; 
 
@@ -1134,7 +1134,7 @@ namespace NightDriver
     public class ChristmasPresents : Location
     {
         const int START   = 0;
-        const int LENGTH = 3*32;
+        const int LENGTH = 3*32 + 50;
 
         private CRGB[] _LEDs = InitializePixels<CRGB>(LENGTH);
 
@@ -1145,17 +1145,8 @@ namespace NightDriver
 
         public ScheduledEffect[] _LEDEffects = 
         {
-            // Whole Palette sections
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, 
-                new PaletteEffect(Palette.SmoothRainbow)
-            {   
-                _Density = .90,
-                _EveryNthDot = 1,
-                _DotSize = 1,
-                _LEDColorPerSecond = 25,
-                _LEDScrollSpeed = 0,
-            }),
-        };
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new PresentsEffect()),
+       };
 
         public override LightStrip[] LightStrips        { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
@@ -1593,7 +1584,7 @@ namespace NightDriver
         
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.8", "WINDOW1", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false) { BatchSize = 5 } ,
+            new LightStrip("192.168.8.8", "WINDOW1", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false) { FramesPerBuffer = 21, BatchSize = 1 } ,
         };
 
         public ScheduledEffect[] _LEDEffects = 
@@ -1623,7 +1614,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.9", "WINDOW2", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false) { BatchSize = 5 },
+            new LightStrip("192.168.8.9", "WINDOW2", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false) { BatchSize = 1 },
         };
 
         public ScheduledEffect[] _LEDEffects =
@@ -1653,7 +1644,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.10", "WINDOW3", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false) { BatchSize = 5 },
+            new LightStrip("192.168.8.10", "WINDOW3", compressData, WINDOW_1_LENGTH, 1, WINDOW_1_START, false) { BatchSize = 1 },
         };
 
         public ScheduledEffect[] _LEDEffects =
