@@ -76,3 +76,43 @@ public class PaletteEffect : LEDEffect
     }
     
 }
+
+// PresentsEffect
+//
+// An effect I created for three decorative boxes of 24 LEDs each, it's a simple inner palette rainbow
+// but with a "sparkle" effect every so often on top of that
+
+class PresentsEffect : LEDEffect
+{
+    PaletteEffect _InnerEffect = new PaletteEffect(Palette.SmoothRainbow)
+        {
+            _Density           = 4,
+            _EveryNthDot       = 1,
+            _DotSize           = 1,
+            _LEDColorPerSecond = 75,
+            _LEDScrollSpeed    = 0
+        };ß
+
+    public PresentsEffect()
+    {
+    }
+
+    protected override void Render(ILEDGraphics graphics)
+    {
+        _InnerEffect.DrawFrame(graphics);
+
+        // We divide by 2 so that out flashing lasts two seconds, not one.  
+
+        if (DateTime.UtcNow.Second % 10 == 0)
+        {
+            var fraction = DateTime.UtcNow.Millisecond / 1000.0;
+            var passes = (Math.Sin(fraction * Math.PI)) * graphics.DotCount / 5.0;
+            //ConsoleApp.Stats.WriteLine(passes.ToString());
+            for (double i = 0; i < passes; i += 1)
+            {
+                graphics.DrawPixel((uint)(Utilities.RandomDouble() * graphics.DotCount), 0, CRGB.White);
+            }
+        }
+    }    
+}
+
