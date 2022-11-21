@@ -91,7 +91,7 @@ class PresentsEffect : LEDEffect
             _DotSize           = 1,
             _LEDColorPerSecond = 75,
             _LEDScrollSpeed    = 0
-        };ß
+        };
 
     public PresentsEffect()
     {
