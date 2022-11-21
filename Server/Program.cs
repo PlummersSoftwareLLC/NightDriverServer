@@ -58,11 +58,14 @@ namespace NightDriver
 
         internal static Location [] g_AllSites =  
         { 
-          // new ChristmasPresents   { FramesPerSecond = 30 }, 
-     
           new Cabana()            { FramesPerSecond = 28 },
+
+          /*
           new Bench()             { FramesPerSecond = 28 },
           new Pillar1()           { FramesPerSecond = 30 },
+          new ChristmasPresents   { FramesPerSecond = 30 }, 
+          */
+          
           new TV()                { FramesPerSecond = 30 },
           new Tree()              { FramesPerSecond = 30 }, 
           new ShopCupboards()     { FramesPerSecond = 20 },  
