@@ -11,7 +11,7 @@ public class StarEffect<StarType> : LEDEffect where StarType : BaseStar
     private DateTime _lastBaseColorUpdate = DateTime.UtcNow;
 
     public Palette    Palette               = new Palette(CRGB.Rainbow);
-    public bool       Blend                 = true;
+    public bool       Blend                 = false;
     public double     MaxSpeed              = 2.0f;
     public double     NewStarProbability    = 1;
     public double     StarPreignitonTime    = 0.5f;
@@ -21,7 +21,7 @@ public class StarEffect<StarType> : LEDEffect where StarType : BaseStar
     public double     StarSize              = 1.00f;
     public double     ColorSpeed            = 0.0;
     public double     BaseColorSpeed        = 0.0;
-    public bool       RandomStartColor      = true;
+    public bool       RandomStartColor      = false;
     public bool       RandomStarColorSpeed  = true;
     public int        Direction             = 0;
     public uint       Alignment             = 0;
@@ -46,7 +46,7 @@ public class StarEffect<StarType> : LEDEffect where StarType : BaseStar
 
                 double pos = (d * graphics.DotCount);
                 BaseStar star;
-                double colorD = RandomStartColor ? _random.NextDouble() * 360 : CurrentStartColor % 360;
+                double colorD = RandomStartColor ? _random.NextDouble() : CurrentStartColor;
                 double speedD = RandomStarColorSpeed? _random.NextDouble() * ColorSpeed : ColorSpeed;
 
                 // Create a star, which is done differently depending in which kind of star it is (hue vs palette).  Should
@@ -235,6 +235,7 @@ public class PaletteStar : BaseStar
         _lastColorChange = DateTime.UtcNow;
         _paletteSpeed = paletteSpeed;
         _paletteIndex = paletteIndex;
+        _palette.Blend = false;
     }
            
     public override void Update()
@@ -243,8 +244,8 @@ public class PaletteStar : BaseStar
 
         base.Update();                                                                  // Resets _lastUpdate, so get value first
 
-        _paletteIndex += _paletteSpeed * deltaSeconds;
-        _paletteIndex %= _palette.OriginalSize;                                                           // Number of entries in a Palette256
+        _paletteIndex += _paletteSpeed * deltaSeconds;          //
+        _paletteIndex -= (long) _paletteIndex;                  // Just keep digits
         StarColor = _palette[_paletteIndex];
     }
 }
