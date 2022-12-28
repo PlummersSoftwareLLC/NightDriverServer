@@ -58,20 +58,21 @@ namespace NightDriver
 
         internal static Location [] g_AllSites =  
         { 
-          new Cabana()            { FramesPerSecond = 28 },  // Should be max of 22 given the 8*144
-          new Bench()             { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
-          new TV()                { FramesPerSecond = 30 },  // Runs flame effect, so looks better at 30   
-          new Tree()              { FramesPerSecond = 28  },  // Runs CharlieBrownTree, looks better at 30
-          new ShopCupboards()     { FramesPerSecond = 28 },  
-//          new ShopEastWindows()   { FramesPerSecond = 24 },  
-          new ShopSouthWindows1() { FramesPerSecond = 1 },  
-          new ShopSouthWindows2() { FramesPerSecond = 1 },  
-          new ShopSouthWindows3() { FramesPerSecond = 1 },  
+          new ChristmasPresents   { FramesPerSecond = 30 }, 
+          new ChristmasTruck      { FramesPerSecond = 45 }, 
+          new Pillars()           { FramesPerSecond = 30 },
+          
+          new Cabana()            { FramesPerSecond = 28 },
 
-          //new Demo()              { FramesPerSecond = 40 },  // Runs flame effect, so looks better at 30   
-          //new ShopSouthWindows    { FramesPerSecond = 1  },
-          //new Monitor()           { FramesPerSecond = 24 },  // Lights on back of my monitor
-          //new NorthWall()         { FramesPerSecond = 1  },
+          new Bench()             { FramesPerSecond = 28 },
+          
+          new TV()                { FramesPerSecond = 30 },
+          new Tree()              { FramesPerSecond = 30 }, 
+          new ShopCupboards()     { FramesPerSecond = 20 },  
+        
+          new ShopSouthWindows1() { FramesPerSecond = 2 },  
+          new ShopSouthWindows2() { FramesPerSecond = 2 },  
+          new ShopSouthWindows3() { FramesPerSecond = 2 },  
         };
 
         public static Location[] Locations

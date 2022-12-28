@@ -16,7 +16,7 @@ public class LEDEffect
 
     protected virtual void Render(ILEDGraphics graphics)
     {
-        // BUGBUG class and this methoi would be abstract except for serialization requiremets
+        // BUGBUG class and this methoi would be abstract except for serialization requiremets // BUGBUG What?  What serialization?
         throw new ApplicationException("Render Base Class called - This is abstract");
     }
     
