@@ -10,18 +10,18 @@ The function LightStrip::GetDataFrame is the one that puts together the packet a
 	var data = GetPixelData(MainLEDs);
 	return
 		LEDInterop.CombineByteArrays(LEDInterop.WORDToBytes(WIFI_COMMAND_PIXELDATA64), 
-		LEDInterop.WORDToBytes((UInt16)Channel), // LED channel on ESP32
-		LEDInterop.DWORDToBytes((UInt32)data.Length / 3), // Number of LEDs
-		LEDInterop.ULONGToBytes(seconds), // Timestamp seconds (64 bit)
-		LEDInterop.ULONGToBytes(uSeconds), // Timestmap microseconds (64 bit)
-		data); // Color Data
+			LEDInterop.WORDToBytes((UInt16)Channel), // LED channel on ESP32
+			LEDInterop.DWORDToBytes((UInt32)data.Length / 3), // Number of LEDs
+			LEDInterop.ULONGToBytes(seconds), // Timestamp seconds (64 bit)
+			LEDInterop.ULONGToBytes(uSeconds), // Timestmap microseconds (64 bit)
+			data); // Color Data
 
 The packet format, then, starts with a WORD magic cookie of WIFI_COMMAND_PIXELDATA64, which is 3.  
 The next WORD is the LED channel (or 0 for 'all channels'.)
 The next DWORD is the number of LEDs being set
 The next ULONG (64 bits) is the timestamp (whole seconds)
 The next ULONG (64 bits) is the timestamp (microseconds)
-Then the raw color data in RGB format (one 3-byte triplet per LED being sent)
+Then the raw color data in RGB format (one 3-byte RGB triplet per LED being sent)
 
 This demo sets the timestamp to be a second or two in the future, depending on how much RAM the NightDriverStrip has, so that each strip can hold its data until the timestamp comes due and then they all show it at the same time, which is how multiple strips stay in sync.
 
