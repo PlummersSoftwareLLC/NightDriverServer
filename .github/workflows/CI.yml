@@ -50,11 +50,3 @@ jobs:
         context: .
         platforms: linux/amd64,linux/arm64
         push: ${{ env.ENABLE_DOCKER_PUSH }}
-
-    - name: Build arm32 Docker image
-      uses: docker/build-push-action@v3
-      with:
-        tags: davepl/nightdriverserver:latest-arm32
-        context: .
-        file: Dockerfile.arm32
-        push: ${{ env.ENABLE_DOCKER_PUSH }}
