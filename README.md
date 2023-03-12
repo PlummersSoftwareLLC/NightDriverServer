@@ -7,18 +7,21 @@ The purpose of the NightDriverServer project is to serve as a "demo" of how to s
 While this demo is in C#, any lanugage that can create a byte array and send it to a socket will work.  I've done examples in C++, Python, and C# in the past.
 
 ## Packet Format
+
 The format for a packet of color data, a single frame, is:
 
 The function LightStrip::GetDataFrame is the one that puts together the packet and returns a byte array to be sent to the socket.
 
-	var data = GetPixelData(MainLEDs);
-	return
-		LEDInterop.CombineByteArrays(LEDInterop.WORDToBytes(WIFI_COMMAND_PIXELDATA64), 
-			LEDInterop.WORDToBytes((UInt16)Channel), // LED channel on ESP32
-			LEDInterop.DWORDToBytes((UInt32)data.Length / 3), // Number of LEDs
-			LEDInterop.ULONGToBytes(seconds), // Timestamp seconds (64 bit)
-			LEDInterop.ULONGToBytes(uSeconds), // Timestmap microseconds (64 bit)
-			data); // Color Data
+```csharp
+    var data = GetPixelData(MainLEDs);
+    return
+        LEDInterop.CombineByteArrays(LEDInterop.WORDToBytes(WIFI_COMMAND_PIXELDATA64), 
+            LEDInterop.WORDToBytes((UInt16)Channel), // LED channel on ESP32
+            LEDInterop.DWORDToBytes((UInt32)data.Length / 3), // Number of LEDs
+            LEDInterop.ULONGToBytes(seconds), // Timestamp seconds (64 bit)
+            LEDInterop.ULONGToBytes(uSeconds), // Timestmap microseconds (64 bit)
+            data); // Color Data
+```
 
 The packet format, then, starts with a WORD magic cookie of WIFI_COMMAND_PIXELDATA64, which is 3.  
 The next WORD is the LED channel (or 0 for 'all channels'.)
