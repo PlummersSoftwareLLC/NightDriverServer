@@ -522,7 +522,7 @@ namespace NightDriver
         public static LEDEffect RainbowMiniLites => new PaletteEffect(Palette.SmoothRainbow ) 
         {
             _Density = 1,
-            _EveryNthDot = 20,
+            _EveryNthDot = 10,
             _DotSize = 1,
             _LEDColorPerSecond = 20,
             _LEDScrollSpeed = 0
@@ -701,7 +701,7 @@ namespace NightDriver
                 {
                     Palette = new Palette(CRGB.Rainbow),
                     Blend = false,
-                    NewStarProbability = 5,
+                    NewStarProbability = 2,
                     StarPreignitonTime = 0.0,
                     StarIgnition = 0,
                     StarHoldTime = 2.0,
@@ -746,7 +746,7 @@ namespace NightDriver
                 return new StarEffect<ColorStar>
                 {
                     Blend = true,
-                    NewStarProbability = 5,
+                    NewStarProbability = 3,
                     StarPreignitonTime = 0.5,
                     StarIgnition = 0,
                     StarHoldTime = 1.0,
@@ -921,6 +921,28 @@ namespace NightDriver
         {
             // Uncomment to test a single effect
 
+            new ScheduledEffect(ScheduledEffect.AllDays,  22, 23, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.50f), 2)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  23, 24, new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.60f), 2)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0,  1,  new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.70f), 4)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  1,  2,  new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.80f), 4)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  2,  3,  new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.90f), 4)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  3,  4,  new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.80f), 4)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  4,  5,  new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.70f), 3)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  5,  6,  new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.60f), 2)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  6,  7,  new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.50f), 2)),
+            new ScheduledEffect(ScheduledEffect.AllDays,  7,  8,  new SimpleColorFillEffect(CRGB.RandomSaturatedColor.fadeToBlackBy(0.40f), 2)),
+
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  8, 22, EffectsDatabase.SubtleColorTwinkleStarEffect ),
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  8, 22, EffectsDatabase.OneDirectionStars ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  8, 22, EffectsDatabase.ColorFadeMiniLites ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  8, 22, EffectsDatabase.ColorCycleTube ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  8, 22, EffectsDatabase.RainbowMiniLites ),            
+            new ScheduledEffect(ScheduledEffect.AllDays,  8, 22, EffectsDatabase.QuietColorStars),
+
+            new ScheduledEffect(ScheduledEffect.AllDays,  8, 22, EffectsDatabase.QuietColorStars),
+
             /* Very high data rate - could even be too much to decompress on the ESP32
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new PaletteEffect(Palette.SmoothRainbow)
             {   
@@ -933,8 +955,9 @@ namespace NightDriver
             */
 
 
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ClassicTwinkle),
+            // new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ClassicTwinkle),
 
+            /*
           new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, 
                 new PaletteEffect(new Palette(CRGB.ChristmasLights)
                 { Blend = false }
@@ -946,7 +969,8 @@ namespace NightDriver
                 _LEDColorPerSecond = 0,
                 _LEDScrollSpeed = 10,
             }), 
-                  
+              */
+
 
             // Busy Stuff
 
@@ -1214,18 +1238,25 @@ namespace NightDriver
     {
         const bool compressData = true;
         const int DEMO_START = 0;
-        const int DEMO_LENGTH = 18;
+        const int DEMO_LENGTH = 144;
 
         private CRGB[] _LEDs = InitializePixels<CRGB>(DEMO_LENGTH);
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.1.54", "DEMO", compressData, DEMO_LENGTH, 1, DEMO_START, false) { FramesPerBuffer = 500, BatchSize = 10  }  // 216
+            new LightStrip("192.168.8.75", "DEMO", compressData, DEMO_LENGTH, 1, DEMO_START, false) { FramesPerBuffer = 500, BatchSize = 10  }  // 216
         };
 
         public ScheduledEffect[] _LEDEffects =
         {
-            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.Blue, 1)),
+            new ScheduledEffect(ScheduledEffect.AllDays, 21, 22, new FireworksEffect() { NewParticleProbability = 2.0, MaxSpeed = 150 } ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.OneDirectionStars ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  8, 22, EffectsDatabase.QuietColorStars),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.SubtleColorTwinkleStarEffect ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.SubtleColorTwinkleStarEffect ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ColorFadeMiniLites ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ColorCycleTube ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.RainbowMiniLites ),
      
            //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.White, 1)), 
             //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24,  EffectsDatabase.QuietBlueStars),

@@ -67,7 +67,7 @@ namespace NightDriver
           new Bench()             { FramesPerSecond = 28 },
           
           new TV()                { FramesPerSecond = 30 },
-          new Tree()              { FramesPerSecond = 30 }, 
+          new Demo()              { FramesPerSecond = 30 }, 
           new ShopCupboards()     { FramesPerSecond = 20 },  
         
           new ShopSouthWindows1() { FramesPerSecond = 2 },  
