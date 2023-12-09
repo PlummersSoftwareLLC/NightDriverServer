@@ -23,7 +23,7 @@ namespace NightDriver
 {
     internal class ConsoleApp
     {
-        private static bool bShouldExit = false;
+        CancellationToken _token;
         public static Statistics Stats = new Statistics();
 
         // REVIEW - Best was I can find at the moment to conirm whether a console is present.
@@ -58,7 +58,7 @@ namespace NightDriver
 
         internal static Location [] g_AllSites =  
         { 
-          new ChristmasPresents   { FramesPerSecond = 30 }, 
+          new CeilingStrip   { FramesPerSecond = 30 }, 
           new ChristmasTruck      { FramesPerSecond = 45 }, 
           new Pillars()           { FramesPerSecond = 30 },
           
@@ -91,11 +91,11 @@ namespace NightDriver
 
             // Set the Cancel property to true to prevent the process from terminating.
             Console.WriteLine("Setting the bShouldExit property to true...");
-            bShouldExit = true;
+            
             args.Cancel = false;
         }
 
-        internal static void Start()
+        internal void Start(CancellationToken token)
         {
             // Establish an event handler to process key press events.
             if (SystemHasConsole)
@@ -104,9 +104,9 @@ namespace NightDriver
             DateTime lastStats = DateTime.UtcNow - TimeSpan.FromDays(1);
 
             foreach (var site in g_AllSites)
-                site.StartWorkerThread();
+                site.StartWorkerThread(token);
 
-            while (!bShouldExit)
+            while (!token.IsCancellationRequested)
             {
                 double d = (DateTime.UtcNow - lastStats).TotalMilliseconds;
                 // Don't update the stats more than ever 100ms

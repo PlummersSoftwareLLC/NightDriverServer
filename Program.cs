@@ -17,18 +17,6 @@ namespace WebHost
     {
         public static void Main(string[] args)
         {
-            Thread ledControlThread = new Thread(NightDriver.ConsoleApp.Start);
-            ledControlThread.IsBackground = true;
-
-            var host = CreateHostBuilder(args).Build();
-            var hostTask = host.StartAsync();
-
-            ledControlThread.Start();
-
-            while (ledControlThread.IsAlive)
-               Thread.Sleep(1000);
-
-            host.StopAsync();
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

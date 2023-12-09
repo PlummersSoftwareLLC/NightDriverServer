@@ -212,23 +212,6 @@ namespace NightDriver
             throw new ApplicationException("Should never hit base class GetDataFrame");
         }
 
-/*
-        protected virtual byte[] GetClockFrame(DateTime timeStart)
-        {
-            // The timeOffset is how far in the future frames are generated for.  If the chips have a 2 second buffer, you could
-            // go up to 2 seconds, but I shoot for the middle of the buffer depth.  
-
-            double epoch = (DateTime.UtcNow.Ticks - DateTime.UnixEpoch.Ticks) / (double)TimeSpan.TicksPerSecond;
-            ulong seconds = (ulong)epoch;                                      // Whole part of time number (left of the decimal point)
-            ulong uSeconds = (ulong)((epoch - (int)epoch) * 1000000);           // Fractional part of time (right of the decimal point)
-
-            return LEDInterop.CombineByteArrays(LEDInterop.WORDToBytes((UInt16)2),             // Command, which is 2 for us
-                                                LEDInterop.WORDToBytes((UInt16)0),             // LED channel on ESP32
-                                                LEDInterop.ULONGToBytes((UInt64)seconds),      // Number of LEDs
-                                                LEDInterop.ULONGToBytes((UInt64)uSeconds)      // Timestamp seconds
-                                                );                                             // Color Data
-        }
-*/
         byte[] CompressFrame(byte[] data)
         {
             const int COMPRESSED_HEADER_TAG = 0x44415645;       // Magic "DAVE" tag for compressed data - replaces size field

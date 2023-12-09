@@ -20,7 +20,7 @@ namespace NightDriver
             get
             {
                 if (0 == Location.FramesPerSecond)                  // No speed indication yet, can't guess at offset, assume 1 second for now
-                    return 1.0;
+                    return 0.0;
 
                 double offset =  (FramesPerBuffer * PercentBufferUse) / Location.FramesPerSecond;
                 return offset;

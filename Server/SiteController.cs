@@ -67,19 +67,20 @@ namespace NightDriver
 
     // Location
     //
-    // A "site" is a set of one or more LED strip controllers and the effects that will run on them.  It
+    // A "location" is a set of one or more LED strip controllers and the effects that will run on them.  It
     // implements the "GraphicsBase" interface so that the effects can draw upon the "site" as a whole,
     // and it is later divied up to the various controllers.  So if you have 4000 LEDs, you might have
     // four strips with 1000 LEDs each, for example.  Combined with a list of effects, they consitute a site.
 
     public class Location : GraphicsBase
     {
+        protected CancellationToken _token;
         protected DateTime StartTime;
         protected System.Threading.Thread _Thread;
         protected virtual CRGB[] LEDs { get; }
         public virtual LightStrip[] LightStrips { get; }
         public virtual ScheduledEffect[] LEDEffects { get; }
-
+        
         public const int PIXELS_PER_METER144 = 144;
 
         public Location()
@@ -125,11 +126,11 @@ namespace NightDriver
         void WorkerDrawAndSendLoop()
         {
             DateTime lastSpareTimeReset = DateTime.UtcNow;
-            DateTime timeLastFrame = DateTime.UtcNow - TimeSpan.FromSeconds(1.0 / FramesPerSecond);
+            DateTime timeLastFrame = DateTime.UtcNow -TimeSpan.FromSeconds((FramesPerSecond == 0 ? 0 : 1.0 / FramesPerSecond));
 
-            for (;;)
+            while (!_token.IsCancellationRequested)
             {
-                DateTime timeNext = timeLastFrame + TimeSpan.FromSeconds(1.0 / FramesPerSecond);
+                DateTime timeNext = timeLastFrame + TimeSpan.FromSeconds(1.0 / (FramesPerSecond > 0 ? FramesPerSecond : 30));
                 DrawAndEnqueueAll(timeNext);
                 timeLastFrame = timeNext;
 
@@ -157,15 +158,15 @@ namespace NightDriver
             }
         }
 
-        public void StartWorkerThread()
+        public void StartWorkerThread(CancellationToken token)
         {
             foreach (var strip in LightStrips)
                 strip.Location = this;
 
-
+            _token = token;
             _Thread = new Thread(WorkerDrawAndSendLoop);
             _Thread.IsBackground = true;
-            _Thread.Priority = ThreadPriority.BelowNormal;
+            _Thread.Priority = ThreadPriority.Normal;
             _Thread.Start();
         }
 
@@ -1079,16 +1080,16 @@ namespace NightDriver
     //
     // Location definition for the test rig on the workbench
 
-    public class ChristmasPresents : Location
+    public class CeilingStrip : Location
     {
         const int START   = 0;
-        const int LENGTH = 3*32 + 50;
+        const int LENGTH = 5*144 + 38;
 
         private CRGB[] _LEDs = InitializePixels<CRGB>(LENGTH);
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.67", "FireTruck", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 500, BatchSize = 10  }  // 216
+            new LightStrip("192.168.8.196", "Ceiling", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 10, BatchSize = 1  }  // 216
         }; 
 
         public ScheduledEffect[] _LEDEffects = 
