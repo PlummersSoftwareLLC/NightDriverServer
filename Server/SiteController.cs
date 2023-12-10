@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Linq;
+using System.Diagnostics;
 
 namespace NightDriver
 {
@@ -76,7 +77,7 @@ namespace NightDriver
     {
         protected CancellationToken _token;
         protected DateTime StartTime;
-        protected System.Threading.Thread _Thread;
+        public    System.Threading.Thread _Thread;
         protected virtual CRGB[] LEDs { get; }
         public virtual LightStrip[] LightStrips { get; }
         public virtual ScheduledEffect[] LEDEffects { get; }
@@ -156,19 +157,21 @@ namespace NightDriver
                     lastSpareTimeReset = DateTime.UtcNow;
                 }
             }
+            Debug.WriteLine("Leaving WorkerDrawAndSendLooop");
         }
 
         public void StartWorkerThread(CancellationToken token)
         {
             foreach (var strip in LightStrips)
-                strip.Location = this;
+                strip.Location = this; 
 
             _token = token;
             _Thread = new Thread(WorkerDrawAndSendLoop);
             _Thread.IsBackground = true;
-            _Thread.Priority = ThreadPriority.Normal;
+            _Thread.Priority = ThreadPriority.BelowNormal;
             _Thread.Start();
         }
+
 
         public string CurrentEffectName
         {
@@ -1062,7 +1065,7 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.70", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 21, BatchSize = 1  }  // 216
+            new LightStrip("192.168.8.70", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) { FramesPerBuffer = 24, BatchSize = 1  }  // 216
             //new LightStrip("192.168.8.163", "BENCH", compressData, BENCH_LENGTH, 1, BENCH_START, true, 0, false) {  }  // 216
         }; 
 
@@ -1089,12 +1092,14 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.196", "Ceiling", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 10, BatchSize = 1  }  // 216
+            new LightStrip("192.168.8.196", "Ceiling A", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 24, BatchSize = 1  },  // 216
+            new LightStrip("192.168.8.1", "Ceiling B", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 24, BatchSize = 1  }  // 216
         }; 
 
         public ScheduledEffect[] _LEDEffects = 
         {
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new PresentsEffect()),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ClassicTwinkle ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.MarqueeEffect ),
        };
 
         public override LightStrip[] LightStrips        { get { return _StripControllers; } }

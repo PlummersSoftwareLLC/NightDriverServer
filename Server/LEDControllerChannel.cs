@@ -27,6 +27,8 @@ using System.Runtime.InteropServices;
 using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Diagnostics;
+using Microsoft.AspNetCore.SignalR.Protocol;
 
 // LEDControllerChannel
 //
@@ -70,6 +72,8 @@ namespace NightDriver
 
     public class LEDControllerChannel
     {
+        private CancellationTokenSource _cancellationTokenSource;
+
         public string HostName;
         public string FriendlyName;
         public bool CompressData = true;
@@ -139,6 +143,7 @@ namespace NightDriver
             RedGreenSwap = swapRedGreen;
             BatchSize = batchSize;
 
+            _cancellationTokenSource = new CancellationTokenSource();
             _Worker = new Thread(WorkerConnectAndSendLoop);
             _Worker.Name = hostName + " Connect and Send Loop";
             _Worker.IsBackground = true;
@@ -146,19 +151,25 @@ namespace NightDriver
             _Worker.Start();
         }
 
+        ~LEDControllerChannel()
+        {
+            _cancellationTokenSource.Cancel();
+            _Worker.Join();
+        }
 
-        internal bool HasSocket       // Is there a socket at all yet?
+        public bool HasSocket       // Is there a socket at all yet?
         {
             get
             {
                 ControllerSocket controllerSocket = ControllerSocketForHost(HostName);
                 if (null == controllerSocket || controllerSocket._socket == null)
                     return false;
-                return true;
+                return controllerSocket._socket.Connected;
             }
         }
 
-        internal bool ReadyForData    // Is there a socket and is it connected to the chip?
+
+        public bool ReadyForData    // Is there a socket and is it connected to the chip?
         {
             get
             {
@@ -172,7 +183,7 @@ namespace NightDriver
             }
         }
 
-        internal uint MinimumSpareTime => (uint)_HostControllerSockets.Min(controller => controller.Value.BytesPerSecond);
+        public uint MinimumSpareTime => (uint)_HostControllerSockets.Min(controller => controller.Value.BytesPerSecond);
 
         public uint BytesPerSecond
         {
@@ -311,9 +322,7 @@ namespace NightDriver
 
         void WorkerConnectAndSendLoop()
         {
-            // We delay-start a random fraction of a quarter second to stagger the workload so that the WiFi is a little more balanced
-
-            for (; ; )
+            while(_cancellationTokenSource.IsCancellationRequested == false)
             {
                 ControllerSocket controllerSocket
                     = _HostControllerSockets.GetOrAdd(HostName, (hostname) =>
@@ -378,9 +387,10 @@ namespace NightDriver
                         }
                     }
                 }
-
                 Thread.Sleep(10);
             }
+            Debug.WriteLine("Leaving WorkerConnectAndSendLoop");
+
         }
     }
 
@@ -490,12 +500,23 @@ namespace NightDriver
             }
         }
 
+        public void Close()
+        {
+            if (_socket != null && _socket.Connected)
+            {
+                _socket.Close();
+                _socket = null;
+            }
+        }
         // SocketResponse
         //
         // The response structure sent back to us when we deliver a frame of data to the NightDriverStrip
 
         unsafe public uint SendData(byte[] data, ref SocketResponse response)
         {
+            if (_socket == null)
+                return 0;
+
             uint result = (uint)_socket.Send(data);
             if (result != data.Length)
             {

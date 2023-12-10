@@ -8,7 +8,7 @@ namespace NightDriver
     {
         public uint FramesPerBuffer  = 21;                      // How many buffer frames the chips have
         
-        public const double PercentBufferUse = 0.70;            // How much of the buffer we should use up
+        public const double PercentBufferUse = 0.75;            // How much of the buffer we should use up
 
         // The only attribute that a light strip adds is that it can be reversed, as you
         // could hand it from either end
@@ -19,6 +19,9 @@ namespace NightDriver
         {
             get
             {
+                if (null == Location)
+                    return 0;
+
                 if (0 == Location.FramesPerSecond)                  // No speed indication yet, can't guess at offset, assume 1 second for now
                     return 0.0;
 
@@ -45,23 +48,11 @@ namespace NightDriver
 
         protected override byte[] GetDataFrame(CRGB [] MainLEDs, DateTime timeStart)
         {
-            // The old original code truncated 64 bit values down to 32, and we need to fix that, so it's a in a packet called PIXELDATA64
-            // and is only sent to newer flashes taht support it.  Otherwise we send the old original foramt.
-
             // The timeOffset is how far in the future frames are generated for.  If the chips have a 2 second buffer, you could
             // go up to 2 seconds, but I shoot for the middle of the buffer depth.  Right now it's calculated as using 
 
             double epoch = (timeStart.Ticks - DateTime.UnixEpoch.Ticks + (TimeOffset * TimeSpan.TicksPerSecond)) / (double)TimeSpan.TicksPerSecond;
-            
-            // If the strip clock is within one minute of our clock, adjust the packet time by the amount that we
-            // differ.  This will cause more of the buffer to be used, and will help prevent cases where the buffer
-            // gets stale because the clock is behind.
-
-            if (Math.Abs(Response.currentClock - epoch) < 60.0)
-            {
-                //epoch += (epoch - Response.currentClock) * 0.5;
-            }
-
+          
             ulong seconds = (ulong)epoch;                                       // Whole part of time number (left of the decimal point)
             ulong uSeconds = (ulong)((epoch - (int)epoch) * 1000000);           // Fractional part of time (right of the decimal point)
 
