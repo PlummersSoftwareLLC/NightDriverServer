@@ -14,11 +14,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace NightDriver
 {
     public class Statistics
     {
+        const uint cMaxLogLines = 1000;
+
         public uint SpareMilisecondsPerFrame = 0;
 
         protected List<Tuple<string, DateTime>> textLines = new List<Tuple<string, DateTime>>();
@@ -68,10 +71,22 @@ namespace NightDriver
             lock (textLines)
             {
                 textLines.Add(new Tuple<string, DateTime>(text, DateTime.Now));
-                while (textLines.Count > 50)
+                while (textLines.Count > cMaxLogLines)
                     textLines.RemoveAt(0);
             }
         }
+
+        public String Text
+        {
+            get
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                foreach (var line in textLines) 
+                    stringBuilder.Append(line.Item2.ToString() + " " + line.Item1.ToString() + "\r\n");
+                return stringBuilder.ToString();
+            }
+        }
+
 
         string Spaces => string.Concat(Enumerable.Repeat(" ", Console.WindowWidth));
         string Dashes => string.Concat(Enumerable.Repeat("-", Console.WindowWidth));

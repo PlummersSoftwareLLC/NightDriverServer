@@ -21,7 +21,7 @@ using System.Threading;
 
 namespace NightDriver
 {
-    internal class ConsoleApp
+    public class ConsoleApp
     {
         CancellationToken _token;
         public static Statistics Stats = new Statistics();
