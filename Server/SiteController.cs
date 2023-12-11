@@ -1092,8 +1092,8 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.196", "Ceiling A", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 24, BatchSize = 1  },  // 216
-            new LightStrip("192.168.8.1", "Ceiling B", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 24, BatchSize = 1  }  // 216
+            new LightStrip("192.168.8.196", "Ceiling A", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 24, BatchSize = 4  },  // 216
+            //new LightStrip("192.168.8.1", "Ceiling B", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 24, BatchSize = 1  }  // 216
         }; 
 
         public ScheduledEffect[] _LEDEffects = 

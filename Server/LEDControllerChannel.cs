@@ -142,19 +142,46 @@ namespace NightDriver
             CompressData = compressData;
             RedGreenSwap = swapRedGreen;
             BatchSize = batchSize;
-
-            _cancellationTokenSource = new CancellationTokenSource();
-            _Worker = new Thread(WorkerConnectAndSendLoop);
-            _Worker.Name = hostName + " Connect and Send Loop";
-            _Worker.IsBackground = true;
-            _Worker.Priority = ThreadPriority.BelowNormal;
-            _Worker.Start();
         }
 
         ~LEDControllerChannel()
         {
+            Stop();
+        }
+
+        public bool Start()
+        {
+            _cancellationTokenSource = new CancellationTokenSource();
+            _Worker = new Thread(WorkerConnectAndSendLoop);
+            _Worker.Name = HostName + " Connect and Send Loop";
+            _Worker.IsBackground = true;
+            _Worker.Priority = ThreadPriority.BelowNormal;
+            _Worker.Start();
+            return true;
+        }
+
+        // Stop
+        //
+        // Signals the worker thread to exit, waits for it, and closes the socket (if open)
+
+        public bool Stop()
+        {
+            // If we don't have a cancellation source, we've been told to stop before startingl likely
+
+            if (null == _cancellationTokenSource)
+                return false;
+
+            // Shut down the controller socket for this strip
+
+            ControllerSocket controllerSocket = ControllerSocketForHost(HostName);
+            if (controllerSocket != null && controllerSocket._socket != null)
+                controllerSocket.Close();
+
+            // Wrap up the worker thread
+
             _cancellationTokenSource.Cancel();
             _Worker.Join();
+            return true;
         }
 
         public bool HasSocket       // Is there a socket at all yet?
