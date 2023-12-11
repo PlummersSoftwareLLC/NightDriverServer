@@ -180,7 +180,6 @@ namespace NightDriver
             // Wrap up the worker thread
 
             _cancellationTokenSource.Cancel();
-            _Worker.Join();
             return true;
         }
 
