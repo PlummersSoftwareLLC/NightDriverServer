@@ -80,10 +80,13 @@ namespace NightDriver
         {
             get
             {
-                StringBuilder stringBuilder = new StringBuilder();
-                foreach (var line in textLines) 
-                    stringBuilder.Append(line.Item2.ToString() + " " + line.Item1.ToString() + "\r\n");
-                return stringBuilder.ToString();
+                lock (textLines)
+                {
+                    StringBuilder stringBuilder = new StringBuilder();
+                    foreach (var line in textLines)
+                        stringBuilder.Append(line.Item2.ToString() + " " + line.Item1.ToString() + "\r\n");
+                    return stringBuilder.ToString();
+                }                       
             }
         }
 
