@@ -13,6 +13,7 @@ public class FireEffect : LEDEffect
     public uint   _Size = 0;                  // How big the drawing area is; will be repeated if strip is bigger
     public double _SparkProbability = 0.5;    // Chance of a new spark
     double[]      _Temperatures;              // Internal table of cell temperatures
+    public uint   _speed;
 
     public Palette _Palette;
 
@@ -20,13 +21,14 @@ public class FireEffect : LEDEffect
 
     public Random _rand = new Random();
 
-    public FireEffect(uint cSize, bool bMirrored, uint cellsPerLED = 1, Palette palette = null)
+    public FireEffect(uint cSize, bool bMirrored, uint cellsPerLED = 1, uint speed = 1, Palette palette = null)
     {
         _CellsPerLED = cellsPerLED;
 
         _Size     = cSize * _CellsPerLED;
         _Mirrored = bMirrored;
         _Palette  = palette;
+        _speed    = speed;
     }
 
     DateTime _lastUpdate = DateTime.UtcNow;
@@ -41,92 +43,94 @@ public class FireEffect : LEDEffect
 
     protected override void Render(ILEDGraphics graphics)
     {
-        if (_Temperatures == null)
-            _Temperatures = new double[_Size];
-
-        _lastUpdate = DateTime.UtcNow;
-
-        // Erase the drawing area
-        graphics.FillSolid(CRGB.Black);
-
-        double cooldown = _rand.NextDouble() * _Cooling * (DateTime.UtcNow - _lastUpdate).TotalSeconds;
-        _lastUpdate = DateTime.UtcNow;
-
-        for (int i = 0; i < _Temperatures.Length; i++)
+        for (int iSpeed = 0; iSpeed < _speed; iSpeed++)
         {
-            if (cooldown > _Temperatures[i])
+            if (_Temperatures == null)
+                _Temperatures = new double[_Size];
+
+            _lastUpdate = DateTime.UtcNow;
+
+            // Erase the drawing area
+            graphics.FillSolid(CRGB.Black);
+
+            double cooldown = _rand.NextDouble() * _Cooling * (DateTime.UtcNow - _lastUpdate).TotalSeconds;
+            _lastUpdate = DateTime.UtcNow;
+
+            for (int i = 0; i < _Temperatures.Length; i++)
             {
-                _Temperatures[i] = 0;
+                if (cooldown > _Temperatures[i])
+                {
+                    _Temperatures[i] = 0;
+                }
+                else
+                {
+                    _Temperatures[i] = _Temperatures[i] - (double)cooldown;
+                }
+            }
+
+            // Heat from each cell drifts 'up' and diffuses a little
+
+            for (int pass = 0; pass < _Drift; pass++)
+                for (int k = _Temperatures.Length - 1; k >= 2; k--)
+                    _Temperatures[k] = (_Temperatures[k - 1] + _Temperatures[k - 2]) / 2.0f;
+
+            // Randomly ignite new 'sparks' near the bottom
+
+            for (int frame = 0; frame < _Sparks; frame++)
+            {
+                if (_rand.NextDouble() < _SparkProbability)
+                {
+                    // NB: This randomly rolls over sometimes of course, and that's essential to the effect
+                    int y = (int)(_rand.NextDouble() * _SparkHeight);
+                    _Temperatures[y] = (_Temperatures[y] + _rand.NextDouble() * 0.4 + 0.06);
+
+                    if (!_Afterburners)
+                        while (_Temperatures[y] > 1.0)
+                            _Temperatures[y] -= 1.0f;
+                    else
+                        _Temperatures[y] = Math.Min(_Temperatures[y], 1.0f);
+                }
+            }
+
+            // Hack for weird TV layout 
+            for (int j = _Temperatures.Length; j < graphics.DotCount; j++)
+            {
+                graphics.DrawPixel((uint)j, 0, ConvertHeatToColor(_Temperatures[j - (uint)_Temperatures.Length]));
+            }
+
+            if (_Mirrored)
+            {
+                uint len = _Size / _CellsPerLED;
+
+                for (uint j = 0; j < len / 2; j += 1)
+                {
+                    if (_Reversed)
+                    {
+                        graphics.DrawPixel(j, 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+                        graphics.DrawPixel((uint)(len - 1 - j), 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+
+                    }
+                    else
+                    {
+                        graphics.DrawPixel(((uint)(len - 1 - j)), 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+                        graphics.DrawPixel(j, 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+                    }
+                }
             }
             else
             {
-                _Temperatures[i] = _Temperatures[i] - (double) cooldown;
-            }
-        }
-
-        // Heat from each cell drifts 'up' and diffuses a little
-
-        for (int pass = 0; pass < _Drift; pass++)
-            for (int k = _Temperatures.Length - 1; k >= 2; k--)
-                _Temperatures[k] = (_Temperatures[k - 1] + _Temperatures[k - 2]) / 2.0f;
-
-        // Randomly ignite new 'sparks' near the bottom
-
-        for (int frame = 0; frame < _Sparks; frame++)
-        {
-            if (_rand.NextDouble() < _SparkProbability)
-            {
-                // NB: This randomly rolls over sometimes of course, and that's essential to the effect
-                int y = (int)(_rand.NextDouble() * _SparkHeight);
-                _Temperatures[y] = (_Temperatures[y] + _rand.NextDouble() * 0.4 + 0.06);
-
-                if (!_Afterburners)
-                    while (_Temperatures[y] > 1.0)
-                        _Temperatures[y] -= 1.0f;
-                else
-                    _Temperatures[y] = Math.Min(_Temperatures[y], 1.0f);
-            }
-        }
-
-        // Hack for weird TV layout 
-        for (int j = _Temperatures.Length; j < graphics.DotCount; j++)
-        {
-            graphics.DrawPixel((uint) j, 0, ConvertHeatToColor(_Temperatures[j-(uint) _Temperatures.Length]));
-        }
-
-        if (_Mirrored)
-        {
-            uint len = _Size / _CellsPerLED;
-
-            for (uint j = 0; j < len / 2; j+=1)
-            {
-                if (_Reversed)
+                for (uint j = 0; j < _Temperatures.Length; j += _CellsPerLED)
                 {
-                    graphics.DrawPixel(j, 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
-                    graphics.DrawPixel((uint)(len - 1 - j), 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+                    uint len = _Size / _CellsPerLED;
+                    uint i = j / _CellsPerLED;
 
-                }
-                else
-                {
-                    graphics.DrawPixel(((uint)(len - 1 - j)), 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
-                    graphics.DrawPixel(j, 0, ConvertHeatToColor(_Temperatures[j * _CellsPerLED]));
+                    if (_Reversed)
+                        graphics.DrawPixel(i, 0, ConvertHeatToColor(_Temperatures[j]));
+                    else
+                        graphics.DrawPixel((uint)(len - 1 - i), 0, ConvertHeatToColor(_Temperatures[j]));
                 }
             }
         }
-        else
-        {
-            for (uint j = 0; j < _Temperatures.Length; j+=_CellsPerLED)
-            {
-                uint len = _Size / _CellsPerLED;
-                uint i = j / _CellsPerLED;
-
-                if (_Reversed)
-                    graphics.DrawPixel(i, 0, ConvertHeatToColor(_Temperatures[j]));
-                else
-                    graphics.DrawPixel((uint)(len - 1 - i), 0, ConvertHeatToColor(_Temperatures[j]));
-            }
-        }
-
         graphics.Blur(1);
     }
 }

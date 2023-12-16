@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -26,16 +27,14 @@ public class Palette
     {
         get
         {
-            while (d < 0)
-                d += 1.0;
-
             d -= ((long)d);                                     // Wrap around to 0-1 scale so that 3.4 -> 0.4, for example
 
             double fracPerColor = 1.0 / colorEntries.Length;                        // How much, on 0-1 scale, each provided color take up (8 colors -> .125)
             double indexD       = d / fracPerColor;                                 // Convert from 0-1 to 0-N (so if we have 8 colors, .275 becomes color # 2.2).
-            int    index        = (int)(d / fracPerColor) % colorEntries.Length;    // The integer portion, which will be the base color (color #2 in this example)
-            double fraction     = indexD - index;                                   // How much of the next ordinal color to blend with (0.2 of the color to the right)
-
+            int    index        = (int)(indexD) % colorEntries.Length;    // The integer portion, which will be the base color (color #2 in this example)
+            double fraction     = indexD - index;                                 // How much of the next ordinal color to blend with (0.2 of the color to the right)
+            //double fraction = indexD = Math.Floor(indexD);                          // How much of the next ordinal color to blend with (0.2 of the color to the right)
+            
             // Find the first integral color
 
             CRGB color1 = colorEntries[index];

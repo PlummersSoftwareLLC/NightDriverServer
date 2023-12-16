@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using NightDriver;
 
 
@@ -8,15 +9,15 @@ public class PaletteEffect : LEDEffect
 {
     private double _iPixel = 0;
 
-    protected double       _iColor;
+    protected double _iColor;
     protected ILEDGraphics _graphics;
-    protected DateTime     _lastDraw = DateTime.UtcNow;
+    protected DateTime _lastDraw = DateTime.UtcNow;
 
-    public Palette         _Palette             = new Palette(CRGB.Rainbow);
+    public Palette _Palette = new Palette(CRGB.Rainbow) { Blend = false };
     public double          _LEDColorPerSecond   = -50.0;
     public double          _LEDScrollSpeed      = 50.0;
     public double          _Density             = 1.0;
-    public double          _EveryNthDot         = 25.0f;
+    public uint            _EveryNthDot         = 25;
     public uint            _DotSize             = 5;
     public bool            _RampedColor         = false;
     public double          _Brightness = 1.0;
@@ -42,17 +43,16 @@ public class PaletteEffect : LEDEffect
         _iPixel %= graphics.DotCount;
 
         double cColorsToScroll = secondsElapsed * _LEDColorPerSecond;
-        _iColor += cColorsToScroll / graphics.PixelsPerMeter;
         _iColor -= (long)_iColor;
 
         double iColor = _iColor;
 
         uint cLength = (_Mirrored ? graphics.DotCount / 2 : graphics.DotCount);
 
-        for (double i = 0; i < cLength; i += _EveryNthDot)
+        for (uint i=0; i < cLength; i += _EveryNthDot)
         {
             int count = 0;
-            for (uint j = 0; j < _DotSize && (i + j) < cLength; j++)
+            for (var j = 0; j < _DotSize && (i + j) < cLength; j++)
             {
                 double iPixel = (i + j + _iPixel) % cLength;
 
@@ -66,15 +66,15 @@ public class PaletteEffect : LEDEffect
                 count++;
 
             }
+            
             // Avoid pixel 0 flicker as it scrolls by copying pixel 1 onto 0
             
             if (graphics.DotCount > 1)
                 graphics.DrawPixel(0, graphics.GetPixel(1));
 
             iColor +=  count * (_Density / graphics.PixelsPerMeter) * _EveryNthDot;
-        }   
-    }
-    
+        }
+    }   
 }
 
 // PresentsEffect

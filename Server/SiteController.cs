@@ -78,7 +78,7 @@ namespace NightDriver
         protected CancellationToken _token;
         protected DateTime StartTime;
         public    System.Threading.Thread _Thread;
-        protected virtual CRGB[] LEDs { get; }
+        public virtual CRGB[] LEDs { get; }
         public virtual LightStrip[] LightStrips { get; }
         public virtual ScheduledEffect[] LEDEffects { get; }
         
@@ -190,7 +190,12 @@ namespace NightDriver
                 int iEffect = (int)((DateTime.Now - StartTime).TotalSeconds / SecondsPerEffect);
                 iEffect %= effectCount;
                 var effect = enabledEffects.ElementAt(iEffect);
-                effect.LEDEffect.DrawFrame(this);
+
+                // We lock the CRGB buffer so that when the UI follows the same approach, we don't
+                // get half-rendered frames in the LEDVisualizer
+
+                lock (LEDs)
+                    effect.LEDEffect.DrawFrame(this);
                 CurrentEffectName = effect.LEDEffect.GetType().Name;
                 if ((DateTime.UtcNow - timeStart2).TotalSeconds > 0.25)
                     ConsoleApp.Stats.WriteLine("MAIN3 DELAY");
@@ -310,7 +315,7 @@ namespace NightDriver
         //           _Cooling = 100
         //        };
 
-        public static LEDEffect FireWindow => new FireEffect(100, true, 2, null) 
+        public static LEDEffect FireWindow => new FireEffect(100, true, 2, 1, null) 
         {
            _Cooling = 3500,
            _Reversed = true,
@@ -1046,7 +1051,7 @@ namespace NightDriver
                     return _LEDEffects; 
             } 
         }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
 
 
@@ -1076,7 +1081,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips        { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs                  { get { return _LEDs; } }
+        public override CRGB[] LEDs                  { get { return _LEDs; } }
     };
 
     // ChristmasPresents - Front Door Pillar Left
@@ -1092,13 +1097,14 @@ namespace NightDriver
 
         private LightStrip[] _StripControllers =
         {
-            new LightStrip("192.168.8.43", "Ceiling A", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 500, BatchSize = 10  },  // 216
+            new LightStrip("192.168.8.43", "Ceiling A", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 500, BatchSize = 10 },  // 216
             //new LightStrip("192.168.8.1", "Ceiling B", true, LENGTH, 1, START, true, 0, false) { FramesPerBuffer = 24, BatchSize = 1  }  // 216
         }; 
 
         public ScheduledEffect[] _LEDEffects = 
         {
-            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.White, 1) ),
+//            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new SimpleColorFillEffect(CRGB.White, 1) ),
+            new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, new FireEffect(LENGTH, true) { _Cooling = 80, _speed = 2 }),
             new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.SubtleColorTwinkleStarEffect ),
 
             //new ScheduledEffect(ScheduledEffect.AllDays,  0, 24, EffectsDatabase.ClassicTwinkle ),
@@ -1107,7 +1113,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips        { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs                  { get { return _LEDs; } }
+        public override CRGB[] LEDs                  { get { return _LEDs; } }
     };
 
     // ChristmasTruck - A little truck I dress up with lights at Christmas
@@ -1162,7 +1168,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips        { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs                  { get { return _LEDs; } }
+        public override CRGB[] LEDs                  { get { return _LEDs; } }
     };
 
     // s - Front Door Pillar Left
@@ -1207,7 +1213,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips        { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects    { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs                  { get { return _LEDs; } }
+        public override CRGB[] LEDs                  { get { return _LEDs; } }
     };
 
     // NorthWall
@@ -1236,7 +1242,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
 
     // Demo
@@ -1288,7 +1294,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
     public class Tree : Location
     {
@@ -1374,7 +1380,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
 
     public class Mirror : Location
@@ -1401,7 +1407,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
     /*
         public class Truck : Location
@@ -1424,7 +1430,7 @@ namespace NightDriver
 
             public override LightStrip[] LightStrips { get { return _StripControllers; } }
             public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-            protected override CRGB[] LEDs { get { return _LEDs; } }
+            public override CRGB[] LEDs { get { return _LEDs; } }
         };
     */
     public class AtomLight : Location
@@ -1450,7 +1456,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
 
     public class TV : Location
@@ -1487,7 +1493,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     }
 
     // ShopCupboards
@@ -1549,7 +1555,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
 
     // ShopSouthWindows
@@ -1584,7 +1590,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     }
 
     public class ShopSouthWindows2 : Location
@@ -1614,7 +1620,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     }
 
     public class ShopSouthWindows3 : Location
@@ -1644,7 +1650,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     }
     
     public class ShopSouthWindows : Location
@@ -1690,7 +1696,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
     
     
@@ -1735,7 +1741,7 @@ namespace NightDriver
 
         public override LightStrip[] LightStrips { get { return _StripControllers; } }
         public override ScheduledEffect[] LEDEffects { get { return _LEDEffects; } }
-        protected override CRGB[] LEDs { get { return _LEDs; } }
+        public override CRGB[] LEDs { get { return _LEDs; } }
     };
     
 }

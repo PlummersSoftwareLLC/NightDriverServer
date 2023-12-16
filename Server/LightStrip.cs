@@ -36,7 +36,7 @@ namespace NightDriver
             Reversed = reversed;
         }
 
-        private byte[] GetPixelData(CRGB [] LEDs)
+        public byte[] GetPixelData(CRGB [] LEDs)
         {
             return LEDInterop.GetColorBytesAtOffset(LEDs, Offset, Width * Height, Reversed, RedGreenSwap);
         }

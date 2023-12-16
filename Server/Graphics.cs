@@ -587,9 +587,11 @@ namespace NightDriver
         {
             CRGB.Red,
             CRGB.Orange,
+            CRGB.Yellow,
             CRGB.Green,
             CRGB.Cyan,
             CRGB.Blue,
+            new CRGB(128, 0, 255),
             CRGB.Purple,
         };
 
